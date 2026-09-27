@@ -1,0 +1,49 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://scripts/slime.gd" id="1_script"]
+[ext_resource type="Material" path="res://materials/slime.tres" id="2_slime"]
+[ext_resource type="Material" path="res://materials/black.tres" id="3_black"]
+[ext_resource type="Material" path="res://materials/corgi_white.tres" id="4_white"]
+
+[sub_resource type="SphereShape3D" id="Shape_slime"]
+radius = 0.4
+
+[sub_resource type="SphereMesh" id="Mesh_body"]
+radius = 0.5
+height = 0.75
+
+[sub_resource type="SphereMesh" id="Mesh_eye"]
+radius = 0.07
+height = 0.14
+
+[node name="Slime" type="CharacterBody3D"]
+collision_layer = 4
+collision_mask = 1
+script = ExtResource("1_script")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+position = Vector3(0, 0.4, 0)
+shape = SubResource("Shape_slime")
+
+[node name="Model" type="Node3D" parent="."]
+
+[node name="Body" type="MeshInstance3D" parent="Model"]
+position = Vector3(0, 0.375, 0)
+mesh = SubResource("Mesh_body")
+material_override = ExtResource("2_slime")
+
+[node name="EyeL" type="MeshInstance3D" parent="Model"]
+position = Vector3(-0.16, 0.48, -0.43)
+mesh = SubResource("Mesh_eye")
+material_override = ExtResource("3_black")
+
+[node name="EyeR" type="MeshInstance3D" parent="Model"]
+position = Vector3(0.16, 0.48, -0.43)
+mesh = SubResource("Mesh_eye")
+material_override = ExtResource("3_black")
+
+[node name="Shine" type="MeshInstance3D" parent="Model"]
+position = Vector3(-0.22, 0.6, -0.22)
+scale = Vector3(0.6, 0.6, 0.6)
+mesh = SubResource("Mesh_eye")
+material_override = ExtResource("4_white")

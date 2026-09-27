@@ -1,0 +1,68 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/hud.gd" id="1_script"]
+
+[node name="HUD" type="CanvasLayer"]
+script = ExtResource("1_script")
+
+[node name="Hearts" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 260.0
+offset_bottom = 70.0
+mouse_filter = 2
+
+[node name="SlimeCounter" type="Label" parent="."]
+layout_mode = 3
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -340.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = 60.0
+grow_horizontal = 0
+theme_override_colors/font_outline_color = Color(0.15, 0.08, 0.08, 1)
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/font_size = 26
+text = "Slimes bonked: 0 / 0"
+horizontal_alignment = 2
+
+[node name="Controls" type="Label" parent="."]
+layout_mode = 3
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = -52.0
+offset_right = 900.0
+offset_bottom = -16.0
+grow_vertical = 0
+modulate = Color(1, 1, 1, 0.85)
+theme_override_colors/font_outline_color = Color(0.15, 0.08, 0.08, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 18
+text = "WASD move  ·  Mouse look  ·  Space jump  ·  Shift run  ·  Click / J swing sword  ·  Esc free mouse"
+
+[node name="Banner" type="Label" parent="."]
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -500.0
+offset_top = -120.0
+offset_right = 500.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 0.9, 0.4, 1)
+theme_override_colors/font_outline_color = Color(0.15, 0.08, 0.08, 1)
+theme_override_constants/outline_size = 14
+theme_override_font_sizes/font_size = 56
+text = "You did it, CorgiKnight!"
+horizontal_alignment = 1
+vertical_alignment = 1
