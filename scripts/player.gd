@@ -9,6 +9,8 @@ extends CharacterBody3D
 
 signal health_changed(current: int, maximum: int)
 signal equipment_changed
+## Emitted when something you can talk to / use comes in or out of range.
+signal interact_target_changed(target: Node3D)
 
 # --- Movement (try changing these in the Inspector!) ---
 @export var walk_speed := 5.0
@@ -20,11 +22,12 @@ signal equipment_changed
 # --- Health & combat ---
 @export var max_health := 5
 @export var invincible_seconds := 1.2
-## Damage and reach when the corgi has no weapon (a paw swipe).
-@export var base_damage := 1
-@export var base_reach := 1.2
-## The weapon the corgi starts with. The corgi starts with no armor.
+## Extra damage on top of the weapon's damage.
+@export var base_damage := 0
+## The weapon the corgi starts with. Empty = no weapon (Mom gives you one!).
 @export var starting_weapon: PackedScene
+## How close you need to be to talk to someone.
+@export var interact_range := 2.0
 
 # --- Camera ---
 @export var mouse_sensitivity := 0.003
@@ -68,6 +71,7 @@ var _walk_cycle := 0.0
 var _was_on_floor := true
 var _tail_phase := 0.0
 var _just_grabbed_mouse := false
+var _interact_target: Node3D
 
 
 func _ready() -> void:
@@ -116,13 +120,18 @@ func _physics_process(delta: float) -> void:
 	if not is_on_floor():
 		velocity.y -= gravity * delta
 
+	# While talking (or in a cutscene) the corgi stands still.
+	var can_act := not Game.controls_locked and _stun_time <= 0.0
+
 	# Jump!
-	if Input.is_action_just_pressed("jump") and is_on_floor() and _stun_time <= 0.0:
+	if Input.is_action_just_pressed("jump") and is_on_floor() and can_act:
 		velocity.y = jump_velocity
 		_squash(Vector3(0.8, 1.25, 0.8))
 
 	# Move relative to where the camera is looking.
 	var input := Input.get_vector("move_left", "move_right", "move_forward", "move_back")
+	if Game.controls_locked:
+		input = Vector2.ZERO
 	var direction := camera_rig.global_transform.basis * Vector3(input.x, 0.0, input.y)
 	direction.y = 0.0
 
@@ -149,11 +158,16 @@ func _physics_process(delta: float) -> void:
 
 	# Sword
 	var wants_attack := Input.is_action_just_pressed("attack") and not _just_grabbed_mouse
-	if wants_attack and _attack_cooldown <= 0.0 and _stun_time <= 0.0:
+	if wants_attack and _attack_cooldown <= 0.0 and can_act and equipped.has("weapon"):
 		_start_attack()
 	_just_grabbed_mouse = false
 	if _attacking:
 		_check_sword_hits()
+
+	# Talk to whoever is nearby.
+	_update_interact_target()
+	if Input.is_action_just_pressed("interact") and can_act and _interact_target:
+		_interact_target.call("interact", self)
 
 	# Fell into the water? Back to the start.
 	if global_position.y < FALL_LIMIT:
@@ -172,15 +186,15 @@ func _process(delta: float) -> void:
 
 ## Put on an item (a scene whose root has the EquipmentItem script).
 ## Anything already in that slot is taken off first.
-func equip(item_scene: PackedScene) -> void:
+func equip(item_scene: PackedScene) -> EquipmentItem:
 	var item := item_scene.instantiate() as EquipmentItem
 	if item == null:
 		push_warning("equip(): that scene's root node needs the equipment_item.gd script.")
-		return
+		return null
 	if not sockets.has(item.slot):
 		push_warning("equip(): unknown slot '%s'." % item.slot)
 		item.queue_free()
-		return
+		return null
 	unequip(item.slot)
 	var targets: Array = sockets[item.slot]
 	for i in targets.size():
@@ -191,6 +205,7 @@ func equip(item_scene: PackedScene) -> void:
 		(targets[i] as Node3D).add_child(piece)
 	equipped[item.slot] = item
 	equipment_changed.emit()
+	return item
 
 
 ## Take off whatever is in a slot ("head", "chest", "back", "shield", "weapon" or "feet").
@@ -211,7 +226,7 @@ func get_attack_damage() -> int:
 
 func get_attack_reach() -> float:
 	var weapon: EquipmentItem = equipped.get("weapon")
-	return weapon.reach if weapon else base_reach
+	return weapon.reach if weapon else 1.0
 
 
 func get_defense() -> int:
@@ -219,6 +234,47 @@ func get_defense() -> int:
 	for item in equipped.values():
 		total += (item as EquipmentItem).defense
 	return total
+
+
+# ---------------------------------------------------------------- Talking
+
+func _update_interact_target() -> void:
+	var best: Node3D = null
+	var best_distance := interact_range
+	if not Game.controls_locked:
+		for thing in get_tree().get_nodes_in_group("interactable"):
+			var node := thing as Node3D
+			if node == null:
+				continue
+			var distance := global_position.distance_to(node.global_position)
+			if distance < best_distance:
+				best = node
+				best_distance = distance
+	if best != _interact_target:
+		_interact_target = best
+		interact_target_changed.emit(best)
+
+
+# ---------------------------------------------------------------- Sleeping
+
+## Lie down in bed (used at the very start of the game).
+func lie_down() -> void:
+	model.rotation = Vector3(0.0, PI, -PI / 2.0)
+	model.position = Vector3(0.45, 0.28, 0.0)
+	camera_rig.rotation.y = PI * 0.25
+
+
+## Wake up, stretch, and hop to your feet. Use with `await`.
+func wake_up() -> void:
+	var tween := create_tween()
+	tween.tween_property(model, "rotation:z", -PI / 2.0 + 0.25, 0.15)
+	tween.tween_property(model, "rotation:z", -PI / 2.0, 0.15)
+	tween.tween_interval(0.3)
+	tween.tween_property(model, "rotation", Vector3(0.0, PI, 0.0), 0.35).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tween.parallel().tween_property(model, "position", Vector3.ZERO, 0.35)
+	await tween.finished
+	_squash(Vector3(0.8, 1.25, 0.8))
+	velocity.y = 3.5
 
 
 # ---------------------------------------------------------------- Sword

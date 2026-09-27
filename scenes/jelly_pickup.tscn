@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/jelly_pickup.gd" id="1_script"]
+
+[sub_resource type="SphereMesh" id="Mesh_blob"]
+radius = 0.18
+height = 0.28
+radial_segments = 20
+rings = 10
+
+[node name="JellyPickup" type="Node3D"]
+script = ExtResource("1_script")
+
+[node name="Blob" type="MeshInstance3D" parent="."]
+mesh = SubResource("Mesh_blob")

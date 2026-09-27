@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3]
+[gd_scene load_steps=21 format=3]
 
 [ext_resource type="Script" path="res://scripts/main.gd" id="1_main"]
 [ext_resource type="PackedScene" path="res://scenes/player.tscn" id="2_player"]
@@ -8,6 +8,7 @@
 [ext_resource type="Material" path="res://materials/grass.tres" id="6_grass"]
 [ext_resource type="Material" path="res://materials/sand.tres" id="7_sand"]
 [ext_resource type="Material" path="res://materials/water.tres" id="8_water"]
+[ext_resource type="PackedScene" path="res://scenes/house.tscn" id="9_house"]
 
 [sub_resource type="ProceduralSkyMaterial" id="SkyMat"]
 sky_top_color = Color(0.32, 0.58, 0.95, 1)
@@ -111,24 +112,26 @@ size = Vector3(2, 2.7, 2)
 position = Vector3(0, 0, -3.5)
 size = Vector3(5, 3.6, 5)
 
+[node name="House" parent="." instance=ExtResource("9_house")]
+
 [node name="Player" parent="." instance=ExtResource("2_player")]
-position = Vector3(0, 0.1, 0)
+position = Vector3(-2.2, 0.5, -2.2)
 
 [node name="Slimes" type="Node3D" parent="."]
 
 [node name="GreenSlime" parent="Slimes" groups=["keep_clear"] instance=ExtResource("3_slime")]
-position = Vector3(6, 0.5, 6)
+position = Vector3(9, 0.5, 10)
 
 [node name="BlueSlime" parent="Slimes" groups=["keep_clear"] instance=ExtResource("3_slime")]
-position = Vector3(-8, 0.5, 4)
+position = Vector3(-12, 0.5, 7)
 body_color = Color(0.4, 0.7, 1, 1)
 
 [node name="PinkSlime" parent="Slimes" groups=["keep_clear"] instance=ExtResource("3_slime")]
-position = Vector3(-5, 0.5, -9)
+position = Vector3(-7, 0.5, -13)
 body_color = Color(1, 0.55, 0.75, 1)
 
 [node name="GreenSlime2" parent="Slimes" groups=["keep_clear"] instance=ExtResource("3_slime")]
-position = Vector3(15, 0.5, 8)
+position = Vector3(18, 0.5, 5)
 
 [node name="KingSlime" parent="Slimes" groups=["keep_clear"] instance=ExtResource("3_slime")]
 position = Vector3(12, 3.8, -13.5)

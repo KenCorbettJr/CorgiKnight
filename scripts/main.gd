@@ -1,6 +1,6 @@
 extends Node3D
-## Sets up the island: scatters trees, rocks and flowers, hooks the HUD up to
-## the corgi, and cheers when every slime has been bonked.
+## Sets up the island (scatters trees, rocks and flowers), connects the HUD
+## to the corgi, and plays the wake-up-in-bed intro.
 
 const TREE_SCENE := preload("res://scenes/tree.tscn")
 const ROCK_SCENE := preload("res://scenes/rock.tscn")
@@ -14,31 +14,52 @@ const ROCK_SCENE := preload("res://scenes/rock.tscn")
 
 @onready var player = $Player
 @onready var hud = $HUD
+@onready var mom = $House/Mom
+@onready var zzz: Label3D = $House/Zzz
 @onready var scenery: Node3D = $Scenery
 
-var _slimes_total := 0
-var _slimes_defeated := 0
 var _rng := RandomNumberGenerator.new()
 
 
 func _ready() -> void:
+	Game.reset()
 	_rng.seed = world_seed
 	_scatter_scenery()
 
 	player.health_changed.connect(hud.set_health)
 	hud.set_health(player.health, player.max_health)
+	player.interact_target_changed.connect(_on_interact_target_changed)
 
-	for slime in get_tree().get_nodes_in_group("enemies"):
-		_slimes_total += 1
-		slime.died.connect(_on_slime_died)
-	hud.set_slimes(0, _slimes_total)
+	_play_intro()
 
 
-func _on_slime_died(_slime: Node3D) -> void:
-	_slimes_defeated += 1
-	hud.set_slimes(_slimes_defeated, _slimes_total)
-	if _slimes_defeated >= _slimes_total:
-		hud.show_banner("You did it, CorgiKnight!")
+func _on_interact_target_changed(target: Node3D) -> void:
+	hud.set_prompt(str(target.get("prompt_text")) if target else "")
+
+
+## The corgi is asleep in bed... then wakes up and Mom says good morning.
+func _play_intro() -> void:
+	Game.controls_locked = true
+	player.lie_down()
+
+	# Floating "z Z z" above the bed.
+	zzz.visible = true
+	var snore := create_tween().set_loops()
+	snore.tween_property(zzz, "position:y", zzz.position.y + 0.25, 1.0).set_trans(Tween.TRANS_SINE)
+	snore.tween_property(zzz, "position:y", zzz.position.y, 1.0).set_trans(Tween.TRANS_SINE)
+
+	await hud.fade_in(2.0)
+	hud.show_banner("CorgiKnight", 1.8)
+	await get_tree().create_timer(3.0).timeout
+
+	snore.kill()
+	zzz.visible = false
+	await player.wake_up()
+	await get_tree().create_timer(0.4).timeout
+
+	Game.controls_locked = false
+	Game.set_stage(Game.Stage.TALK_TO_MOM)
+	mom.greet()
 
 
 # ---------------------------------------------------------------- Scenery
@@ -53,6 +74,13 @@ func _is_clear_spot(spot: Vector3) -> bool:
 		if flat.length() < 7.0:
 			return false
 	return true
+
+
+## True if a spot is inside (or right next to) the house.
+func _near_building(spot: Vector3) -> bool:
+	var house := $House as Node3D
+	var local := spot - house.global_position
+	return absf(local.x) < 4.3 and absf(local.z) < 3.9
 
 
 func _random_spot(min_radius: float) -> Vector3:
@@ -108,5 +136,8 @@ func _scatter_scenery() -> void:
 		flower.mesh = flower_mesh
 		flower.material_override = materials[_rng.randi() % materials.size()]
 		flower.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		var spot := _random_spot(1.5)
+		while _near_building(spot):
+			spot = _random_spot(1.5)
 		scenery.add_child(flower)
-		flower.position = _random_spot(1.5) + Vector3(0, 0.05, 0)
+		flower.position = spot + Vector3(0, 0.05, 0)

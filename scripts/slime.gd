@@ -6,6 +6,8 @@ extends CharacterBody3D
 
 signal died(slime: Node3D)
 
+const JELLY_SCENE := preload("res://scenes/jelly_pickup.tscn")
+
 @export var max_health := 3
 @export var body_color := Color(0.45, 0.85, 0.35)
 @export var hop_speed := 3.0
@@ -14,6 +16,8 @@ signal died(slime: Node3D)
 @export var wander_radius := 5.0
 @export var contact_damage := 1
 @export var gravity := 20.0
+## Seconds before a bonked slime comes back (so there's always more jelly).
+@export var respawn_seconds := 25.0
 
 @onready var model: Node3D = $Model
 @onready var body_mesh: MeshInstance3D = $Model/Body
@@ -74,6 +78,10 @@ func _physics_process(delta: float) -> void:
 	if global_position.y < -2.0:
 		global_position = _home + Vector3.UP
 		velocity = Vector3.ZERO
+	# Knocked far away from home (like off the lookout)? Wobble back home.
+	elif global_position.distance_to(_home) > wander_radius + chase_range * 2.0:
+		global_position = _home + Vector3.UP
+		velocity = Vector3.ZERO
 
 
 func _hop() -> void:
@@ -132,7 +140,30 @@ func _die() -> void:
 	remove_from_group("enemies")
 	collision_layer = 0
 	died.emit(self)
+	_drop_jelly()
 	var tween := create_tween()
 	tween.tween_property(model, "scale", Vector3(1.7, 0.2, 1.7), 0.12)
 	tween.tween_property(model, "scale", Vector3.ZERO, 0.18)
-	tween.tween_callback(queue_free)
+	tween.tween_interval(respawn_seconds)
+	tween.tween_callback(_respawn)
+
+
+func _drop_jelly() -> void:
+	var jelly := JELLY_SCENE.instantiate() as Node3D
+	jelly.set("color", body_color)
+	jelly.position = global_position + Vector3.UP * 0.3
+	get_tree().current_scene.add_child(jelly)
+
+
+func _respawn() -> void:
+	global_position = _home
+	velocity = Vector3.ZERO
+	health = max_health
+	_stun_time = 0.0
+	_hop_timer = 1.0
+	_material.albedo_color = body_color
+	collision_layer = 4
+	add_to_group("enemies")
+	_dead = false
+	var tween := create_tween()
+	tween.tween_property(model, "scale", Vector3.ONE, 0.4).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)

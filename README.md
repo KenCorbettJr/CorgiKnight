@@ -19,23 +19,28 @@ The first time you open it, Godot will spend a few seconds importing files. That
 | Jump | Space | A |
 | Run | Shift | Left bumper |
 | Swing sword | Left click / J | X |
+| Talk | E | Y |
 | Free the mouse | Esc (click to grab it again) | — |
 
-**Goal:** bonk all 5 slimes. The purple King Slime is waiting on top of the stone lookout. You'll have to jump up the steps to reach it.
+**Story:** you wake up in bed in your little house. Talk to **Mom** (walk up to her and press **E**) and she'll give you a **Wooden Sword**. Then head outside, bonk slimes, and collect **5 Slime Jelly** (each bonked slime drops one, and slimes come back after a while). Bring the jelly home to Mom to finish the quest! The purple King Slime waits on top of the stone lookout.
 
 ## What's in here
 
 ```
 scenes/
-  main.tscn         The island: sky, sun, ground, water, the lookout, slimes
+  main.tscn         The island: sky, sun, ground, water, the house, the lookout, slimes
+  house.tscn        The corgi's cottage: bed, table, lamp, and Mom
+  characters/       The corgi body (shared by the player and Mom) and Mom herself
+  jelly_pickup.tscn Slime Jelly that slimes drop
   player.tscn       The corgi knight (made from simple shapes for now) + camera
-  equipment/        Things the corgi can hold or wear (starts with just a sword)
+  equipment/        Things the corgi can hold or wear (Wooden Sword from Mom, plus a spare sword)
   slime.tscn        A slime enemy
   tree.tscn         A puffy cartoon tree
   rock.tscn         A rock
   stone_block.tscn  A stone block (change its Size in the Inspector)
   hud.tscn          Hearts, slime counter, victory message
 scripts/            The code for each of the above (lots of comments!)
+                    game_state.gd remembers the story progress and jelly count
 materials/          Toon-shaded colors + the cartoon outline
 ```
 
@@ -46,11 +51,13 @@ materials/          Toon-shaded colors + the cartoon outline
 - **Build more of the world:** drag in more `stone_block.tscn` blocks and set their Size to make towers, walls and ruins.
 - **New island layout:** click the Main node and change `World Seed` to move the trees and rocks around.
 - **Recolor everything:** double-click a file in `materials/` to change its color.
+- **Change what Mom says:** open `scripts/mom.gd`. All her lines are in quotes and easy to edit.
+- **Make the quest harder:** open `scripts/game_state.gd` and change `jelly_goal := 5` to a bigger number.
 
 ## Equipment
 
 The corgi has attachment points for gear: **head**, **chest**, **back**, **shield** (left paw),
-**weapon** (right paw) and **feet** (both feet). It starts with only a sword and no armor.
+**weapon** (right paw) and **feet** (both feet). It starts with nothing; Mom gives it the Wooden Sword.
 
 To make a new item:
 
@@ -66,5 +73,6 @@ To make a new item:
 - Swap the shape-corgi for a real animated model (e.g. the Shiba Inu from Quaternius' free animal pack, or a custom one made in Blender).
 - Heart pickups that heal the corgi.
 - A treasure chest with a better sword or armor inside.
+- More villagers to talk to, and more quests from Mom.
 - A real boss fight.
 - A dodge roll and a lock-on camera.
