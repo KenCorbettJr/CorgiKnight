@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3]
+[gd_scene format=3]
 
 [ext_resource type="Script" path="res://scripts/main.gd" id="1_main"]
 [ext_resource type="PackedScene" path="res://scenes/player.tscn" id="2_player"]
@@ -9,6 +9,19 @@
 [ext_resource type="Material" path="res://materials/sand.tres" id="7_sand"]
 [ext_resource type="Material" path="res://materials/water.tres" id="8_water"]
 [ext_resource type="PackedScene" path="res://scenes/house.tscn" id="9_house"]
+[ext_resource type="PackedScene" path="res://scenes/cottage.tscn" id="10_cottage"]
+[ext_resource type="PackedScene" path="res://scenes/shop_stall.tscn" id="11_shop"]
+[ext_resource type="PackedScene" path="res://scenes/characters/villager.tscn" id="12_villager"]
+[ext_resource type="Material" path="res://materials/roof_blue.tres" id="13_roof_blue"]
+[ext_resource type="Material" path="res://materials/roof_green.tres" id="14_roof_green"]
+[ext_resource type="Material" path="res://materials/wall_cream.tres" id="15_wall_cream"]
+[ext_resource type="Material" path="res://materials/wall_pink.tres" id="16_wall_pink"]
+[ext_resource type="Material" path="res://materials/stone.tres" id="17_stone"]
+[ext_resource type="Material" path="res://materials/wood_dark.tres" id="18_wood_dark"]
+[ext_resource type="Material" path="res://materials/roof.tres" id="19_roof"]
+[ext_resource type="PackedScene" path="res://scenes/characters/corgiwizard.tscn" id="20_wizard"]
+[ext_resource type="PackedScene" path="res://scenes/dock.tscn" id="21_dock"]
+[ext_resource type="Script" path="res://scripts/boss_event.gd" id="22_boss_event"]
 
 [sub_resource type="ProceduralSkyMaterial" id="SkyMat"]
 sky_top_color = Color(0.32, 0.58, 0.95, 1)
@@ -48,6 +61,22 @@ top_radius = 32.0
 bottom_radius = 33.0
 height = 2.0
 radial_segments = 96
+
+[sub_resource type="CylinderShape3D" id="Shape_well"]
+radius = 1.1
+height = 0.7
+
+[sub_resource type="CylinderMesh" id="Mesh_well"]
+top_radius = 1.1
+bottom_radius = 1.15
+height = 0.7
+radial_segments = 24
+
+[sub_resource type="CylinderMesh" id="Mesh_well_water"]
+top_radius = 0.9
+bottom_radius = 0.9
+height = 0.02
+radial_segments = 24
 
 [sub_resource type="PlaneMesh" id="Mesh_water"]
 size = Vector2(400, 400)
@@ -112,7 +141,110 @@ size = Vector3(2, 2.7, 2)
 position = Vector3(0, 0, -3.5)
 size = Vector3(5, 3.6, 5)
 
-[node name="House" parent="." instance=ExtResource("9_house")]
+[node name="House" parent="." groups=["building"] instance=ExtResource("9_house")]
+
+[node name="Village" type="Node3D" parent="."]
+
+[node name="ShopStall" parent="Village" instance=ExtResource("11_shop")]
+position = Vector3(-7, 0, 14)
+rotation = Vector3(0, 1.5708, 0)
+
+[node name="MapleCottage" parent="Village" instance=ExtResource("10_cottage")]
+position = Vector3(8.5, 0, 15)
+rotation = Vector3(0, -1.5708, 0)
+wall_material = ExtResource("15_wall_cream")
+roof_material = ExtResource("13_roof_blue")
+
+[node name="CloverCottage" parent="Village" instance=ExtResource("10_cottage")]
+position = Vector3(0, 0, 22.5)
+rotation = Vector3(0, 3.14159, 0)
+wall_material = ExtResource("16_wall_pink")
+roof_material = ExtResource("14_roof_green")
+
+[node name="Well" type="StaticBody3D" parent="Village" groups=["keep_clear", "building"]]
+position = Vector3(0, 0, 14)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Village/Well"]
+position = Vector3(0, 0.35, 0)
+shape = SubResource("Shape_well")
+
+[node name="Stones" type="MeshInstance3D" parent="Village/Well"]
+position = Vector3(0, 0.35, 0)
+mesh = SubResource("Mesh_well")
+material_override = ExtResource("17_stone")
+
+[node name="WellWater" type="MeshInstance3D" parent="Village/Well"]
+position = Vector3(0, 0.66, 0)
+mesh = SubResource("Mesh_well_water")
+material_override = ExtResource("8_water")
+
+[node name="PostL" parent="Village/Well" instance=ExtResource("5_block")]
+position = Vector3(-0.95, 0.7, 0)
+size = Vector3(0.15, 1.8, 0.15)
+material = ExtResource("18_wood_dark")
+
+[node name="PostR" parent="Village/Well" instance=ExtResource("5_block")]
+position = Vector3(0.95, 0.7, 0)
+size = Vector3(0.15, 1.8, 0.15)
+material = ExtResource("18_wood_dark")
+
+[node name="WellRoof" parent="Village/Well" instance=ExtResource("5_block")]
+position = Vector3(0, 2.5, 0)
+size = Vector3(2.6, 0.12, 1.4)
+material = ExtResource("19_roof")
+
+[node name="Signpost" parent="Village" instance=ExtResource("5_block")]
+position = Vector3(2.2, 0, 7.5)
+size = Vector3(0.15, 1.7, 0.15)
+material = ExtResource("18_wood_dark")
+
+[node name="SignText" type="Label3D" parent="Village"]
+position = Vector3(2.2, 2.0, 7.5)
+billboard = 1
+modulate = Color(1, 0.95, 0.8, 1)
+outline_modulate = Color(0.25, 0.13, 0.08, 1)
+text = "Corgi Village"
+font_size = 80
+outline_size = 16
+
+[node name="Barnaby" parent="Village" instance=ExtResource("12_villager")]
+position = Vector3(3, 0, 11.5)
+hide_spot = Vector3(5, 0, 15)
+npc_name = "Old Barnaby"
+fur_color = Color(0.62, 0.6, 0.62, 1)
+accessory = 2
+size = 1.05
+lines = Array[String](["Well, hello there, young pup. I'm Old Barnaby.|I've lived on this island longer than those trees have been growing!", "See that big purple slime up on the old stone lookout?|It hits twice as hard as the others. A shield or a helmet would help!", "Legend says an evil Corgiwizard once cursed these islands.|I hope he never comes back...", "Back in my day, we bonked slimes with sticks! Uphill! Both ways!"])
+cape_lines = Array[String](["A red cape! You remind me of the great CorgiKnights of long ago.", "Back in my day, we bonked slimes with sticks! Uphill! Both ways!"])
+
+[node name="Pip" parent="Village" instance=ExtResource("12_villager")]
+position = Vector3(-2.5, 0, 16.5)
+hide_spot = Vector3(0, 0, 18.9)
+npc_name = "Pip"
+fur_color = Color(0.98, 0.8, 0.55, 1)
+accessory = 3
+size = 0.8
+lines = Array[String](["Whoa, is that a real sword?! I'm Pip!|When I grow up I'm gonna be a knight too!", "Did you know slimes taste like blueberries?|...I didn't actually try it. Maple told me.", "Race you to the well!|...Wait, my legs are too short. Never mind."])
+cape_lines = Array[String](["WOW, a real cape! Can I touch it? Can I? Can I?!", "Someday I'm gonna have a cape just like yours!"])
+
+[node name="Maple" parent="Village" instance=ExtResource("12_villager")]
+position = Vector3(4.4, 0, 17)
+hide_spot = Vector3(5, 0, 15.6)
+npc_name = "Maple"
+fur_color = Color(0.8, 0.36, 0.2, 1)
+accessory = 1
+lines = Array[String](["Morning, neighbor! I'm Maple. I look after the trees on this island.", "Don't worry about chopping trees. Give 'em a minute and they grow right back.|Island magic!", "Biscuit at the shop pays good coins for wood. Handy if you want new gear!"])
+
+[node name="Clover" parent="Village" instance=ExtResource("12_villager")]
+position = Vector3(1.8, 0, 18)
+hide_spot = Vector3(0.6, 0, 18.9)
+npc_name = "Clover"
+fur_color = Color(0.95, 0.92, 0.86, 1)
+accessory = 5
+lines = Array[String](["Hi! I'm Clover. Have you been to Biscuit's shop?|The Speedy Boots are SO fast!", "Leather caps have little holes for your ears. Very fashionable.", "Sell your extra Slime Jelly to Biscuit, then treat yourself to something nice!"])
+cape_lines = Array[String](["That cape is so pretty! Red is definitely your color.", "Sell your extra Slime Jelly to Biscuit, then treat yourself to something nice!"])
 
 [node name="Player" parent="." instance=ExtResource("2_player")]
 position = Vector3(-2.2, 0.5, -2.2)
@@ -120,10 +252,10 @@ position = Vector3(-2.2, 0.5, -2.2)
 [node name="Slimes" type="Node3D" parent="."]
 
 [node name="GreenSlime" parent="Slimes" groups=["keep_clear"] instance=ExtResource("3_slime")]
-position = Vector3(9, 0.5, 10)
+position = Vector3(22, 0.5, 2)
 
 [node name="BlueSlime" parent="Slimes" groups=["keep_clear"] instance=ExtResource("3_slime")]
-position = Vector3(-12, 0.5, 7)
+position = Vector3(-20, 0.5, -4)
 body_color = Color(0.4, 0.7, 1, 1)
 
 [node name="PinkSlime" parent="Slimes" groups=["keep_clear"] instance=ExtResource("3_slime")]
@@ -131,13 +263,27 @@ position = Vector3(-7, 0.5, -13)
 body_color = Color(1, 0.55, 0.75, 1)
 
 [node name="GreenSlime2" parent="Slimes" groups=["keep_clear"] instance=ExtResource("3_slime")]
-position = Vector3(18, 0.5, 5)
+position = Vector3(20, 0.5, -14)
 
 [node name="KingSlime" parent="Slimes" groups=["keep_clear"] instance=ExtResource("3_slime")]
 position = Vector3(12, 3.8, -13.5)
 max_health = 5
 body_color = Color(0.72, 0.45, 0.95, 1)
+contact_damage = 2
 chase_range = 6.0
 wander_radius = 1.0
+
+[node name="Dock" parent="." instance=ExtResource("21_dock")]
+position = Vector3(0, 0, -29)
+
+[node name="Corgiwizard" parent="." instance=ExtResource("20_wizard")]
+position = Vector3(0, 3, 13.5)
+
+[node name="CutsceneCamera" type="Camera3D" parent="."]
+position = Vector3(7, 4, 2.5)
+fov = 60.0
+
+[node name="BossEvent" type="Node" parent="."]
+script = ExtResource("22_boss_event")
 
 [node name="HUD" parent="." instance=ExtResource("4_hud")]

@@ -1,0 +1,35 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/pickup.gd" id="1_script"]
+[ext_resource type="Material" path="res://materials/bark.tres" id="2_bark"]
+[ext_resource type="Material" path="res://materials/wood_light.tres" id="3_wood"]
+
+[sub_resource type="CylinderMesh" id="Mesh_log"]
+top_radius = 0.09
+bottom_radius = 0.09
+height = 0.42
+radial_segments = 12
+
+[node name="WoodPickup" type="Node3D"]
+script = ExtResource("1_script")
+kind = "wood"
+
+[node name="Visual" type="Node3D" parent="."]
+
+[node name="Log1" type="MeshInstance3D" parent="Visual"]
+position = Vector3(0, -0.05, 0.06)
+rotation = Vector3(0, 0, 1.5708)
+mesh = SubResource("Mesh_log")
+material_override = ExtResource("2_bark")
+
+[node name="Log2" type="MeshInstance3D" parent="Visual"]
+position = Vector3(0, -0.05, -0.12)
+rotation = Vector3(0, 0, 1.5708)
+mesh = SubResource("Mesh_log")
+material_override = ExtResource("2_bark")
+
+[node name="Log3" type="MeshInstance3D" parent="Visual"]
+position = Vector3(0, 0.1, -0.03)
+rotation = Vector3(0, 0, 1.5708)
+mesh = SubResource("Mesh_log")
+material_override = ExtResource("3_wood")

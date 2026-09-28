@@ -10,6 +10,8 @@ rings = 10
 
 [node name="JellyPickup" type="Node3D"]
 script = ExtResource("1_script")
+kind = "jelly"
+wobble = true
 
-[node name="Blob" type="MeshInstance3D" parent="."]
+[node name="Visual" type="MeshInstance3D" parent="."]
 mesh = SubResource("Mesh_blob")

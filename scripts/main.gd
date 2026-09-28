@@ -29,12 +29,30 @@ func _ready() -> void:
 	player.health_changed.connect(hud.set_health)
 	hud.set_health(player.health, player.max_health)
 	player.interact_target_changed.connect(_on_interact_target_changed)
+	Game.next_island_requested.connect(_on_next_island_requested)
+	player.died.connect(_on_player_died)
 
 	_play_intro()
 
 
 func _on_interact_target_changed(target: Node3D) -> void:
 	hud.set_prompt(str(target.get("prompt_text")) if target else "")
+
+
+## Out of hearts: show "You died!", wait, then wake up in bed at home.
+func _on_player_died() -> void:
+	await get_tree().create_timer(0.8).timeout
+	await hud.show_death_screen()
+	player.respawn_in_bed()
+	await hud.hide_death_screen()
+	await player.finish_respawn()
+	Game.in_cutscene = false
+
+
+## Captain Salty is ready to sail! The next island isn't built yet, so for
+## now this shows a message. Later: get_tree().change_scene_to_file(...)
+func _on_next_island_requested() -> void:
+	hud.show_banner("The next island is coming soon!", 3.0)
 
 
 ## The corgi is asleep in bed... then wakes up and Mom says good morning.
@@ -76,11 +94,13 @@ func _is_clear_spot(spot: Vector3) -> bool:
 	return true
 
 
-## True if a spot is inside (or right next to) the house.
+## True if a spot is inside (or right next to) a house, shop or well.
 func _near_building(spot: Vector3) -> bool:
-	var house := $House as Node3D
-	var local := spot - house.global_position
-	return absf(local.x) < 4.3 and absf(local.z) < 3.9
+	for building in get_tree().get_nodes_in_group("building"):
+		var b := building as Node3D
+		if b and Vector2(spot.x - b.global_position.x, spot.z - b.global_position.z).length() < 5.0:
+			return true
+	return false
 
 
 func _random_spot(min_radius: float) -> Vector3:

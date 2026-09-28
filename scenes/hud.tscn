@@ -14,6 +14,25 @@ corner_radius_top_right = 18
 corner_radius_bottom_right = 18
 corner_radius_bottom_left = 18
 
+[sub_resource type="StyleBoxFlat" id="Style_boss_bg"]
+bg_color = Color(0.15, 0.08, 0.12, 0.85)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.1, 0.05, 0.05, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="Style_boss_fill"]
+bg_color = Color(0.72, 0.3, 0.95, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
 [node name="HUD" type="CanvasLayer"]
 script = ExtResource("1_script")
 
@@ -25,6 +44,19 @@ offset_top = 20.0
 offset_right = 260.0
 offset_bottom = 70.0
 mouse_filter = 2
+
+[node name="CoinsLabel" type="Label" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 22.0
+offset_top = 66.0
+offset_right = 300.0
+offset_bottom = 100.0
+theme_override_colors/font_color = Color(1, 0.85, 0.3, 1)
+theme_override_colors/font_outline_color = Color(0.15, 0.08, 0.08, 1)
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/font_size = 22
+text = "Coins: 0"
 
 [node name="QuestLabel" type="Label" parent="."]
 layout_mode = 3
@@ -42,7 +74,7 @@ theme_override_constants/outline_size = 8
 theme_override_font_sizes/font_size = 24
 horizontal_alignment = 2
 
-[node name="JellyLabel" type="Label" parent="."]
+[node name="CollectLabel" type="Label" parent="."]
 layout_mode = 3
 anchors_preset = 1
 anchor_left = 1.0
@@ -73,7 +105,7 @@ modulate = Color(1, 1, 1, 0.8)
 theme_override_colors/font_outline_color = Color(0.15, 0.08, 0.08, 1)
 theme_override_constants/outline_size = 6
 theme_override_font_sizes/font_size = 16
-text = "WASD move  ·  Mouse look  ·  Space jump  ·  Shift run  ·  Click / J sword  ·  E talk  ·  Esc free mouse"
+text = "W/S move  ·  A/D or mouse turn  ·  Space jump  ·  Shift run  ·  Click / J swing  ·  Q switch weapon  ·  E talk  ·  C camera  ·  Esc free mouse"
 
 [node name="Prompt" type="Label" parent="."]
 layout_mode = 3
@@ -142,6 +174,115 @@ theme_override_font_sizes/font_size = 16
 text = "E / Space to continue  >"
 horizontal_alignment = 2
 
+[node name="BossBar" type="VBoxContainer" parent="."]
+visible = false
+layout_mode = 3
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -300.0
+offset_top = 96.0
+offset_right = 300.0
+offset_bottom = 160.0
+grow_horizontal = 2
+theme_override_constants/separation = 4
+
+[node name="Name" type="Label" parent="BossBar"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 1, 1)
+theme_override_colors/font_outline_color = Color(0.15, 0.05, 0.15, 1)
+theme_override_constants/outline_size = 10
+theme_override_font_sizes/font_size = 28
+text = "KING SLIME"
+horizontal_alignment = 1
+
+[node name="Health" type="ProgressBar" parent="BossBar"]
+custom_minimum_size = Vector2(0, 26)
+layout_mode = 2
+theme_override_styles/background = SubResource("Style_boss_bg")
+theme_override_styles/fill = SubResource("Style_boss_fill")
+max_value = 20.0
+value = 20.0
+show_percentage = false
+
+[node name="ShopOverlay" type="Control" parent="."]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Dim" type="ColorRect" parent="ShopOverlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.35)
+
+[node name="ShopPanel" type="PanelContainer" parent="ShopOverlay"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -360.0
+offset_top = -290.0
+offset_right = 360.0
+offset_bottom = 290.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("Style_dialogue")
+
+[node name="Margin" type="MarginContainer" parent="ShopOverlay/ShopPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 28
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 28
+theme_override_constants/margin_bottom = 18
+
+[node name="VBox" type="VBoxContainer" parent="ShopOverlay/ShopPanel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Title" type="Label" parent="ShopOverlay/ShopPanel/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.42, 0.18, 1)
+theme_override_font_sizes/font_size = 30
+text = "Biscuit's Shop"
+horizontal_alignment = 1
+
+[node name="Coins" type="Label" parent="ShopOverlay/ShopPanel/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.5, 0.05, 1)
+theme_override_font_sizes/font_size = 22
+text = "You have 0 coins"
+horizontal_alignment = 1
+
+[node name="Message" type="Label" parent="ShopOverlay/ShopPanel/Margin/VBox"]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.25, 0.16, 0.12, 1)
+theme_override_font_sizes/font_size = 20
+text = "What can I get you?"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="Options" type="VBoxContainer" parent="ShopOverlay/ShopPanel/Margin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Hint" type="Label" parent="ShopOverlay/ShopPanel/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.55, 0.4, 0.3, 1)
+theme_override_font_sizes/font_size = 16
+text = "Click, or use arrow keys + Enter.  Esc to leave."
+horizontal_alignment = 1
+
 [node name="Banner" type="Label" parent="."]
 layout_mode = 3
 anchors_preset = 8
@@ -173,3 +314,55 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 color = Color(0, 0, 0, 1)
+
+[node name="DeathScreen" type="Control" parent="."]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Title" type="Label" parent="DeathScreen"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -400.0
+offset_top = -110.0
+offset_right = 400.0
+offset_bottom = 10.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 0.35, 0.35, 1)
+theme_override_colors/font_outline_color = Color(0.1, 0.02, 0.02, 1)
+theme_override_constants/outline_size = 18
+theme_override_font_sizes/font_size = 96
+text = "You died!"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Subtitle" type="Label" parent="DeathScreen"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -400.0
+offset_top = 20.0
+offset_right = 400.0
+offset_bottom = 70.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 0.92, 0.85, 1)
+theme_override_colors/font_outline_color = Color(0.1, 0.02, 0.02, 1)
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/font_size = 28
+text = "Don't worry, you'll wake up safe at home..."
+horizontal_alignment = 1
+vertical_alignment = 1

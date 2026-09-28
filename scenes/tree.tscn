@@ -1,7 +1,9 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=9 format=3]
 
-[ext_resource type="Material" path="res://materials/bark.tres" id="1_bark"]
-[ext_resource type="Material" path="res://materials/leaves.tres" id="2_leaves"]
+[ext_resource type="Script" path="res://scripts/tree.gd" id="1_script"]
+[ext_resource type="Material" path="res://materials/bark.tres" id="2_bark"]
+[ext_resource type="Material" path="res://materials/leaves.tres" id="3_leaves"]
+[ext_resource type="Material" path="res://materials/wood_light.tres" id="4_wood"]
 
 [sub_resource type="CylinderShape3D" id="Shape_trunk"]
 radius = 0.3
@@ -25,30 +27,51 @@ height = 1.5
 radial_segments = 20
 rings = 10
 
+[sub_resource type="CylinderMesh" id="Mesh_stump"]
+top_radius = 0.3
+bottom_radius = 0.34
+height = 0.3
+radial_segments = 12
+
 [node name="PuffyTree" type="StaticBody3D"]
 collision_layer = 1
 collision_mask = 0
+script = ExtResource("1_script")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 position = Vector3(0, 1, 0)
 shape = SubResource("Shape_trunk")
 
-[node name="Trunk" type="MeshInstance3D" parent="."]
+[node name="Stump" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.15, 0)
+mesh = SubResource("Mesh_stump")
+material_override = ExtResource("2_bark")
+
+[node name="StumpTop" type="MeshInstance3D" parent="Stump"]
+position = Vector3(0, 0.14, 0)
+scale = Vector3(0.9, 0.05, 0.9)
+visible = false
+mesh = SubResource("Mesh_stump")
+material_override = ExtResource("4_wood")
+
+[node name="Top" type="Node3D" parent="."]
+
+[node name="Trunk" type="MeshInstance3D" parent="Top"]
 position = Vector3(0, 1, 0)
 mesh = SubResource("Mesh_trunk")
-material_override = ExtResource("1_bark")
+material_override = ExtResource("2_bark")
 
-[node name="Leaves" type="MeshInstance3D" parent="."]
+[node name="Leaves" type="MeshInstance3D" parent="Top"]
 position = Vector3(0, 2.8, 0)
 mesh = SubResource("Mesh_leaves_big")
-material_override = ExtResource("2_leaves")
+material_override = ExtResource("3_leaves")
 
-[node name="Leaves2" type="MeshInstance3D" parent="."]
+[node name="Leaves2" type="MeshInstance3D" parent="Top"]
 position = Vector3(0.7, 3.4, 0.3)
 mesh = SubResource("Mesh_leaves_small")
-material_override = ExtResource("2_leaves")
+material_override = ExtResource("3_leaves")
 
-[node name="Leaves3" type="MeshInstance3D" parent="."]
+[node name="Leaves3" type="MeshInstance3D" parent="Top"]
 position = Vector3(-0.6, 3.6, -0.4)
 mesh = SubResource("Mesh_leaves_small")
-material_override = ExtResource("2_leaves")
+material_override = ExtResource("3_leaves")

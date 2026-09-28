@@ -1,0 +1,203 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/title.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://scenes/characters/corgi_model.tscn" id="2_corgi"]
+[ext_resource type="PackedScene" path="res://scenes/tree.tscn" id="3_tree"]
+[ext_resource type="PackedScene" path="res://scenes/slime.tscn" id="4_slime"]
+[ext_resource type="Material" path="res://materials/grass.tres" id="5_grass"]
+[ext_resource type="PackedScene" path="res://scenes/rock.tscn" id="6_rock"]
+
+[sub_resource type="ProceduralSkyMaterial" id="SkyMat"]
+sky_top_color = Color(0.32, 0.58, 0.95, 1)
+sky_horizon_color = Color(0.85, 0.9, 1, 1)
+ground_bottom_color = Color(0.25, 0.45, 0.7, 1)
+ground_horizon_color = Color(0.85, 0.9, 1, 1)
+
+[sub_resource type="Sky" id="Sky"]
+sky_material = SubResource("SkyMat")
+
+[sub_resource type="Environment" id="Env"]
+background_mode = 2
+sky = SubResource("Sky")
+ambient_light_source = 3
+ambient_light_energy = 0.9
+tonemap_mode = 2
+fog_enabled = true
+fog_light_color = Color(0.85, 0.9, 1, 1)
+fog_density = 0.01
+
+[sub_resource type="CylinderShape3D" id="Shape_ground"]
+radius = 12.0
+height = 1.0
+
+[sub_resource type="CylinderMesh" id="Mesh_ground"]
+top_radius = 12.0
+bottom_radius = 12.0
+height = 1.0
+radial_segments = 64
+
+[sub_resource type="StyleBoxFlat" id="Style_button"]
+bg_color = Color(1, 0.92, 0.78, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.36, 0.22, 0.14, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+content_margin_top = 8.0
+content_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxFlat" id="Style_button_hover"]
+bg_color = Color(1, 0.82, 0.5, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.85, 0.42, 0.18, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+content_margin_top = 8.0
+content_margin_bottom = 8.0
+
+[node name="Title" type="Node3D"]
+script = ExtResource("1_script")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Env")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+rotation = Vector3(-0.8, 0.5, 0)
+light_energy = 1.1
+shadow_enabled = true
+
+[node name="Ground" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ground"]
+position = Vector3(0, -0.5, 0)
+shape = SubResource("Shape_ground")
+
+[node name="Mesh" type="MeshInstance3D" parent="Ground"]
+position = Vector3(0, -0.5, 0)
+mesh = SubResource("Mesh_ground")
+material_override = ExtResource("5_grass")
+
+[node name="Hero" parent="." instance=ExtResource("2_corgi")]
+rotation = Vector3(0, 3.14159, 0)
+scale = Vector3(1.3, 1.3, 1.3)
+
+[node name="Tree1" parent="." instance=ExtResource("3_tree")]
+position = Vector3(-3.6, 0, -3.2)
+
+[node name="Tree2" parent="." instance=ExtResource("3_tree")]
+position = Vector3(4.2, 0, -4.5)
+scale = Vector3(1.3, 1.3, 1.3)
+
+[node name="Tree3" parent="." instance=ExtResource("3_tree")]
+position = Vector3(-6.5, 0, -1.0)
+scale = Vector3(0.9, 0.9, 0.9)
+
+[node name="Tree4" parent="." instance=ExtResource("3_tree")]
+position = Vector3(1.2, 0, -7.5)
+scale = Vector3(1.2, 1.2, 1.2)
+
+[node name="Rock" parent="." instance=ExtResource("6_rock")]
+position = Vector3(2.6, 0, -1.8)
+
+[node name="Slime1" parent="." instance=ExtResource("4_slime")]
+position = Vector3(-2.4, 0.5, 0.6)
+wander_radius = 1.5
+
+[node name="Slime2" parent="." instance=ExtResource("4_slime")]
+position = Vector3(2.8, 0.5, 0.2)
+body_color = Color(0.4, 0.7, 1, 1)
+wander_radius = 1.5
+
+[node name="Camera3D" type="Camera3D" parent="."]
+position = Vector3(0, 1.35, 4)
+current = true
+fov = 55.0
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="Logo" type="Label" parent="UI"]
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 40.0
+offset_bottom = 190.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.3, 1)
+theme_override_colors/font_outline_color = Color(0.3, 0.14, 0.06, 1)
+theme_override_constants/outline_size = 28
+theme_override_font_sizes/font_size = 120
+text = "CorgiKnight"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Tagline" type="Label" parent="UI"]
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 185.0
+offset_bottom = 225.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.3, 0.14, 0.06, 1)
+theme_override_constants/outline_size = 10
+theme_override_font_sizes/font_size = 28
+text = "A little corgi with a big sword"
+horizontal_alignment = 1
+
+[node name="Menu" type="VBoxContainer" parent="UI"]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -150.0
+offset_top = -200.0
+offset_right = 150.0
+offset_bottom = -50.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/separation = 14
+
+[node name="Start" type="Button" parent="UI/Menu"]
+custom_minimum_size = Vector2(300, 70)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.3, 0.16, 0.1, 1)
+theme_override_colors/font_hover_color = Color(0.3, 0.16, 0.1, 1)
+theme_override_colors/font_focus_color = Color(0.3, 0.16, 0.1, 1)
+theme_override_colors/font_pressed_color = Color(0.3, 0.16, 0.1, 1)
+theme_override_font_sizes/font_size = 36
+theme_override_styles/normal = SubResource("Style_button")
+theme_override_styles/hover = SubResource("Style_button_hover")
+theme_override_styles/focus = SubResource("Style_button_hover")
+theme_override_styles/pressed = SubResource("Style_button_hover")
+text = "Start"
+
+[node name="Quit" type="Button" parent="UI/Menu"]
+custom_minimum_size = Vector2(300, 52)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.3, 0.16, 0.1, 1)
+theme_override_colors/font_hover_color = Color(0.3, 0.16, 0.1, 1)
+theme_override_colors/font_focus_color = Color(0.3, 0.16, 0.1, 1)
+theme_override_colors/font_pressed_color = Color(0.3, 0.16, 0.1, 1)
+theme_override_font_sizes/font_size = 26
+theme_override_styles/normal = SubResource("Style_button")
+theme_override_styles/hover = SubResource("Style_button_hover")
+theme_override_styles/focus = SubResource("Style_button_hover")
+theme_override_styles/pressed = SubResource("Style_button_hover")
+text = "Quit"
+
+[node name="Fader" type="ColorRect" parent="UI"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 1)

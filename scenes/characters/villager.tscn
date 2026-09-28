@@ -1,0 +1,19 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/villager.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://scenes/characters/corgi_model.tscn" id="2_model"]
+
+[sub_resource type="CapsuleShape3D" id="Shape_villager"]
+radius = 0.35
+height = 1.2
+
+[node name="Villager" type="StaticBody3D"]
+collision_layer = 1
+collision_mask = 0
+script = ExtResource("1_script")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+position = Vector3(0, 0.6, 0)
+shape = SubResource("Shape_villager")
+
+[node name="Model" parent="." instance=ExtResource("2_model")]

@@ -17,5 +17,27 @@ extends Node3D
 @export var reach := 1.8
 ## Blocks this much damage from each hit (armor). A hit always does at least 1.
 @export var defense := 0
+## Extra hearts while wearing this.
+@export var bonus_hearts := 0
+## Can this weapon chop down trees? (Axes can!)
+@export var can_chop := false
+## Makes the corgi run faster. 0.2 = 20% faster.
+@export var speed_bonus := 0.0
+
+
+## A short description of what this item does, e.g. "+1 heart, blocks 1 damage".
+func describe() -> String:
+	var parts: Array[String] = []
+	if slot == "weapon" and damage > 0:
+		parts.append("%d damage" % damage)
+	if can_chop:
+		parts.append("chops trees")
+	if bonus_hearts > 0:
+		parts.append("+%d heart" % bonus_hearts + ("s" if bonus_hearts > 1 else ""))
+	if defense > 0:
+		parts.append("blocks %d damage" % defense)
+	if speed_bonus > 0.0:
+		parts.append("run faster")
+	return ", ".join(parts)
 ## The name shown to the player, e.g. "Rusty Sword".
 @export var display_name := "Item"

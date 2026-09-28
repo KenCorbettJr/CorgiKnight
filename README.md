@@ -12,35 +12,58 @@ The first time you open it, Godot will spend a few seconds importing files. That
 
 ## Controls
 
+The game starts on the **title screen**: click **Start** (or press Enter).
+
+There are two camera styles. Press **C** to switch:
+
+- **Behind the corgi** (default): the camera stays behind the corgi's head. W walks forward, S backs up, A/D or the mouse turn.
+- **Free look**: move the mouse to look anywhere, and WASD moves the way the camera faces.
+
+
 | Action | Keyboard & mouse | Controller |
 |---|---|---|
-| Move | WASD / arrow keys | Left stick |
-| Look around | Mouse | Right stick |
+| Move | W / S forward and back, A / D turn (arrow keys too) | Left stick |
+| Turn / look around | Mouse | Right stick |
+| Switch camera | C | Click right stick |
 | Jump | Space | A |
 | Run | Shift | Left bumper |
-| Swing sword | Left click / J | X |
+| Swing sword / axe | Left click / J | X |
+| Switch weapon | Q | Right bumper |
 | Talk | E | Y |
 | Free the mouse | Esc (click to grab it again) | — |
 
-**Story:** you wake up in bed in your little house. Talk to **Mom** (walk up to her and press **E**) and she'll give you a **Wooden Sword**. Then head outside, bonk slimes, and collect **5 Slime Jelly** (each bonked slime drops one, and slimes come back after a while). Bring the jelly home to Mom to finish the quest! The purple King Slime waits on top of the stone lookout.
+If you run out of hearts, you'll see **You died!** and then wake up back in your bed with full hearts.
+
+**Story:** you wake up in bed in your little house. Talk to **Mom** (walk up to her and press **E**) and she'll give you a **Wooden Sword**. Then head outside, bonk slimes, and collect **5 Slime Jelly** (each bonked slime drops one, and slimes come back after a while). Bring the jelly home and Mom gives you her old **Axe**: chop down trees (a few swings each; they grow back later) and collect **5 Wood** for the stove. Bring it home and Mom gives you a **Red Cape** that flutters when you run and gives you an extra heart! The purple King Slime waits on top of the stone lookout (it hits twice as hard!).
+
+**The village:** just south of home is Corgi Village, with Old Barnaby, little Pip, Maple and Clover to chat with. At **Biscuit's Shop** you can sell extra Slime Jelly (3 coins each) and Wood (2 coins each) and buy gear: Leather Cap, Wooden Shield, Speedy Boots, Iron Helmet and Iron Sword. The shop never buys the jelly or wood Mom's quest still needs.
+
+**The first boss:** once you've finished Mom's quests and own all four pieces of armor (Leather Cap, Wooden Shield, Speedy Boots, Iron Helmet), the evil **Corgiwizard** appears over the village well. The sky goes dark, everyone runs and hides, and he summons the **King Slime**! It hops after you and every third hop leaps high and slams down with a shockwave, so **jump** to dodge it. At half health it turns red, gets faster and calls in two helper slimes. Beat it to break the curse, bring the sun back, and unlock **Captain Salty's** boat at the north dock. (The next island is coming soon!)
 
 ## What's in here
 
 ```
 scenes/
+  title.tscn        The title screen (the game starts here)
   main.tscn         The island: sky, sun, ground, water, the house, the lookout, slimes
   house.tscn        The corgi's cottage: bed, table, lamp, and Mom
-  characters/       The corgi body (shared by the player and Mom) and Mom herself
+  dock.tscn         The north dock, Captain Salty and his boat
+  king_slime_boss.tscn  The first boss
+  cottage.tscn      A village cottage (pick wall and roof colors in the Inspector)
+  shop_stall.tscn   Biscuit's Shop: what it sells and the prices are on the Biscuit node
+  characters/       The corgi body (shared by everyone), Mom, villager.tscn, and the Corgiwizard
   jelly_pickup.tscn Slime Jelly that slimes drop
+  wood_pickup.tscn  Wood that chopped trees drop
   player.tscn       The corgi knight (made from simple shapes for now) + camera
-  equipment/        Things the corgi can hold or wear (Wooden Sword from Mom, plus a spare sword)
+  equipment/        Things the corgi can hold or wear (Wooden Sword, Axe, Red Cape, plus a spare sword)
   slime.tscn        A slime enemy
-  tree.tscn         A puffy cartoon tree
+  tree.tscn         A puffy cartoon tree (chop it with the axe!)
   rock.tscn         A rock
   stone_block.tscn  A stone block (change its Size in the Inspector)
-  hud.tscn          Hearts, slime counter, victory message
+  hud.tscn          Hearts, quest tracker, dialogue box, pop-up messages
 scripts/            The code for each of the above (lots of comments!)
-                    game_state.gd remembers the story progress and jelly count
+                    boss_event.gd runs the whole Corgiwizard / King Slime scene
+                    game_state.gd remembers the story progress and what you've collected
 materials/          Toon-shaded colors + the cartoon outline
 ```
 
@@ -52,7 +75,10 @@ materials/          Toon-shaded colors + the cartoon outline
 - **New island layout:** click the Main node and change `World Seed` to move the trees and rocks around.
 - **Recolor everything:** double-click a file in `materials/` to change its color.
 - **Change what Mom says:** open `scripts/mom.gd`. All her lines are in quotes and easy to edit.
-- **Make the quest harder:** open `scripts/game_state.gd` and change `jelly_goal := 5` to a bigger number.
+- **Make a new villager:** open `scenes/main.tscn`, drag `characters/villager.tscn` in, and set their Name, Fur Color, Size, Accessory and Lines in the Inspector. Put a `|` in a line to split it into two speech bubbles.
+- **Tune the boss:** open `scenes/king_slime_boss.tscn` and change Max Health, Hop Speed, Slam Every or Shockwave Radius.
+- **Change the shop:** open `scenes/shop_stall.tscn`, click Biscuit, and edit Stock and Prices.
+- **Make the quest harder:** open `scripts/game_state.gd` and change `jelly_goal := 5` or `wood_goal := 5` to bigger numbers.
 
 ## Equipment
 
@@ -63,7 +89,7 @@ To make a new item:
 
 1. Duplicate `scenes/equipment/basic_sword.tscn` (or make a new scene with a Node3D root).
 2. Make sure the root node has `scripts/equipment_item.gd`, pick its **Slot**, and set
-   **Damage** (weapons) or **Defense** (armor).
+   **Damage** (weapons), **Defense** (armor), **Bonus Hearts**, or **Can Chop** (axes).
 3. Build its look from shapes or a 3D model, facing forward (-Z) with its center at the origin.
 4. In code, call `player.equip(preload("res://scenes/equipment/your_item.tscn"))`, for example
    when the corgi opens a treasure chest.
@@ -73,6 +99,6 @@ To make a new item:
 - Swap the shape-corgi for a real animated model (e.g. the Shiba Inu from Quaternius' free animal pack, or a custom one made in Blender).
 - Heart pickups that heal the corgi.
 - A treasure chest with a better sword or armor inside.
-- More villagers to talk to, and more quests from Mom.
-- A real boss fight.
+- More quests from the villagers.
+- The next island! (Hook it up in `_on_next_island_requested()` in `scripts/main.gd`.)
 - A dodge roll and a lock-on camera.

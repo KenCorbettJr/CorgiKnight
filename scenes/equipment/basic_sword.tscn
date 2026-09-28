@@ -17,9 +17,9 @@ size = Vector3(0.04, 0.11, 0.75)
 [node name="BasicSword" type="Node3D"]
 script = ExtResource("1_item")
 slot = "weapon"
-damage = 1
+damage = 2
 reach = 1.9
-display_name = "Trusty Sword"
+display_name = "Iron Sword"
 
 [node name="Grip" type="MeshInstance3D" parent="."]
 position = Vector3(0, 0, 0.02)

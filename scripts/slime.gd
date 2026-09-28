@@ -17,6 +17,7 @@ const JELLY_SCENE := preload("res://scenes/jelly_pickup.tscn")
 @export var contact_damage := 1
 @export var gravity := 20.0
 ## Seconds before a bonked slime comes back (so there's always more jelly).
+## Set below 0 for a slime that never comes back.
 @export var respawn_seconds := 25.0
 
 @onready var model: Node3D = $Model
@@ -65,7 +66,7 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 
 	# Bonk the corgi if we touch it.
-	if _player and _stun_time <= 0.0 and global_position.distance_to(_player.global_position) < 0.95:
+	if _player and _stun_time <= 0.0 and Game.can_play() and global_position.distance_to(_player.global_position) < 0.95:
 		if _player.has_method("take_damage"):
 			_player.call("take_damage", contact_damage, global_position)
 
@@ -144,6 +145,9 @@ func _die() -> void:
 	var tween := create_tween()
 	tween.tween_property(model, "scale", Vector3(1.7, 0.2, 1.7), 0.12)
 	tween.tween_property(model, "scale", Vector3.ZERO, 0.18)
+	if respawn_seconds < 0.0:
+		tween.tween_callback(queue_free)  # boss minions don't come back
+		return
 	tween.tween_interval(respawn_seconds)
 	tween.tween_callback(_respawn)
 

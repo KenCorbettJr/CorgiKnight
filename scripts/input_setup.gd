@@ -15,6 +15,8 @@ func _enter_tree() -> void:
 	_add_keys("attack", [KEY_J, KEY_ENTER])
 	_add_keys("sprint", [KEY_SHIFT])
 	_add_keys("interact", [KEY_E])
+	_add_keys("switch_weapon", [KEY_Q])
+	_add_keys("camera_toggle", [KEY_C])
 
 	# Mouse
 	_add_mouse_button("attack", MOUSE_BUTTON_LEFT)
@@ -32,6 +34,8 @@ func _enter_tree() -> void:
 	_add_joy_button("attack", JOY_BUTTON_X)
 	_add_joy_button("sprint", JOY_BUTTON_LEFT_SHOULDER)
 	_add_joy_button("interact", JOY_BUTTON_Y)
+	_add_joy_button("switch_weapon", JOY_BUTTON_RIGHT_SHOULDER)
+	_add_joy_button("camera_toggle", JOY_BUTTON_RIGHT_STICK)
 
 
 func _ensure_action(action: String) -> void:

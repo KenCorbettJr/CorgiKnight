@@ -1,0 +1,45 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scripts/cape.gd" id="1_cape"]
+[ext_resource type="Material" path="res://materials/cape_red.tres" id="2_red"]
+[ext_resource type="Material" path="res://materials/gold.tres" id="3_gold"]
+
+[sub_resource type="BoxMesh" id="Mesh_cloth"]
+size = Vector3(0.5, 0.52, 0.03)
+
+[sub_resource type="BoxMesh" id="Mesh_shoulders"]
+size = Vector3(0.5, 0.03, 0.2)
+
+[sub_resource type="SphereMesh" id="Mesh_clasp"]
+radius = 0.05
+height = 0.1
+
+[node name="RedCape" type="Node3D"]
+script = ExtResource("1_cape")
+slot = "back"
+bonus_hearts = 1
+display_name = "Red Cape"
+
+[node name="Shoulders" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.13, -0.05)
+mesh = SubResource("Mesh_shoulders")
+material_override = ExtResource("2_red")
+
+[node name="Cloth" type="Node3D" parent="."]
+position = Vector3(0, 0.13, 0.04)
+rotation = Vector3(-0.6, 0, 0)
+
+[node name="ClothMesh" type="MeshInstance3D" parent="Cloth"]
+position = Vector3(0, -0.26, 0)
+mesh = SubResource("Mesh_cloth")
+material_override = ExtResource("2_red")
+
+[node name="ClaspL" type="MeshInstance3D" parent="."]
+position = Vector3(-0.2, 0.1, -0.12)
+mesh = SubResource("Mesh_clasp")
+material_override = ExtResource("3_gold")
+
+[node name="ClaspR" type="MeshInstance3D" parent="."]
+position = Vector3(0.2, 0.1, -0.12)
+mesh = SubResource("Mesh_clasp")
+material_override = ExtResource("3_gold")
