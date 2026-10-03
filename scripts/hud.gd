@@ -16,6 +16,7 @@ extends CanvasLayer
 @onready var coins_label: Label = $CoinsLabel
 @onready var boss_bar: Control = $BossBar
 @onready var death_screen: Control = $DeathScreen
+@onready var fade_text: Label = $FadeText
 @onready var boss_name: Label = $BossBar/Name
 @onready var boss_health: ProgressBar = $BossBar/Health
 @onready var shop_overlay: Control = $ShopOverlay
@@ -223,7 +224,8 @@ func _on_shop_requested(shopkeeper: Node) -> void:
 	_shop = shopkeeper
 	Game.controls_locked = true
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-	shop_title.text = "%s's Shop" % str(shopkeeper.get("npc_name"))
+	var title := str(shopkeeper.get("shop_name"))
+	shop_title.text = title if title != "" else "%s's Shop" % str(shopkeeper.get("npc_name"))
 	shop_message.text = "What can I get you?"
 	shop_overlay.visible = true
 	controls_hint.visible = false
@@ -239,7 +241,7 @@ func _build_shop_menu() -> void:
 		child.queue_free()
 
 	# Selling
-	for kind in ["jelly", "wood"]:
+	for kind in Game.ITEM_NAMES.keys():
 		var amount: int = Game.sellable(kind)
 		var earn: int = amount * Game.SELL_PRICES[kind]
 		var text := "Sell %d %s  (+%d coins)" % [amount, Game.ITEM_NAMES[kind], earn]
@@ -365,3 +367,9 @@ func hide_death_screen() -> void:
 	await tween.finished
 	death_screen.visible = false
 	await fade_in(1.0)
+
+
+## Words shown on top of the black screen (like "Sailing..."). "" hides them.
+func set_fade_text(text: String) -> void:
+	fade_text.text = text
+	fade_text.visible = text != ""

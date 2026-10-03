@@ -91,6 +91,22 @@ func interact(player: Node) -> void:
 			"My brave little knight saved the whole village!",
 			"Captain Salty is waiting at the north dock.|Pack a snack, and don't forget to write!",
 		], _done_talking)
+	elif stage >= Game.Stage.FOREST:
+		var forest_lines := [
+			"You're home! How are the Whispering Woods, sweetie?",
+			"Cyclopses?! Oh my. Make sure you wear your armor!",
+		]
+		if stage == Game.Stage.FOREST_DONE:
+			forest_lines = [
+				"A GIANT cyclops?! And you beat it?!",
+				"My little CorgiKnight is the bravest pup in the whole wide world!",
+			]
+		Game.say(npc_name, forest_lines, _done_talking)
+	elif stage == Game.Stage.DONE and Game.cave_open():
+		Game.say(npc_name, [
+			"Barnaby says there's a strange purple glow coming from the village well.",
+			"If you go down there, be careful, sweetie!",
+		], _done_talking)
 	elif stage == Game.Stage.DONE and not Game.has_all_armor():
 		Game.say(npc_name, [
 			"Have you seen the shiny armor at Biscuit's shop?",

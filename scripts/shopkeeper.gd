@@ -6,6 +6,10 @@ extends "res://scripts/villager.gd"
 
 @export var stock: Array[PackedScene] = []
 @export var prices: Array[int] = []
+## The shop's name, shown on the shop menu.
+@export var shop_name := ""
+## What they say the first time you visit. Leave empty for the usual welcome.
+@export var greeting := ""
 
 var _greeted := false
 ## Name, slot and description of each item for sale (read once at start).
@@ -26,11 +30,14 @@ func _ready() -> void:
 
 func interact(_player_node: Node) -> void:
 	_talking = true
-	var greeting := "Back again? Let's see what you've got!"
+	var first_time := greeting
+	if first_time == "":
+		first_time = "Welcome to %s's Shop!|I buy Slime Jelly and Wood, and I sell the finest gear on the island." % npc_name
+	var text := "Back again? Let's see what you've got!"
 	if not _greeted:
-		greeting = "Welcome to %s's Shop!|I buy Slime Jelly and Wood, and I sell the finest gear on the island." % npc_name
+		text = first_time
 		_greeted = true
-	Game.say(npc_name, Array(greeting.split("|")), _open_shop)
+	Game.say(npc_name, Array(text.split("|")), _open_shop)
 
 
 func _open_shop() -> void:

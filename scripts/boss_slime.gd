@@ -213,5 +213,12 @@ func _drop_treasure() -> void:
 		var angle := TAU * i / 6.0
 		jelly.position = global_position + Vector3(cos(angle), 0.5, sin(angle)) * 1.8
 		get_tree().current_scene.add_child(jelly)
+	# And hearts to heal up after the big fight.
+	var heart_scene := load("res://scenes/heart_pickup.tscn") as PackedScene
+	for i in 3:
+		var heart := heart_scene.instantiate() as Node3D
+		var angle := TAU * i / 3.0 + 0.5
+		heart.position = global_position + Vector3(cos(angle) * 1.0, 0.5, sin(angle) * 1.0)
+		get_tree().current_scene.add_child(heart)
 	Game.add_coins(50)
 	Game.message.emit("+50 coins!")

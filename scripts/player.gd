@@ -13,6 +13,8 @@ signal equipment_changed
 signal interact_target_changed(target: Node3D)
 ## Emitted when the corgi runs out of hearts.
 signal died
+## Emitted when the corgi splashes into the sea (and pops back home).
+signal fell_in_water
 
 enum CameraMode {
 	BEHIND,  ## Camera stays behind the corgi's head. W/S = forward/back, A/D (or mouse) = turn.
@@ -45,7 +47,8 @@ enum CameraMode {
 @export var turn_speed := 2.8
 
 const ARM_REST_ANGLE := 0.35
-const FALL_LIMIT := -2.0
+## Fall below this and you've splashed into the sea. (The cave lowers it.)
+var fall_limit := -2.0
 
 @onready var model: Node3D = $Model
 @onready var hips: Node3D = $Model/Hips
@@ -231,10 +234,10 @@ func _physics_process(delta: float) -> void:
 		_interact_target.call("interact", self)
 
 	# Fell into the water? Back to the start.
-	if global_position.y < FALL_LIMIT:
+	if global_position.y < fall_limit:
 		if _fainted:
 			velocity = Vector3.ZERO  # don't keep sinking behind the "You died!" screen
-			global_position.y = FALL_LIMIT
+			global_position.y = fall_limit
 		else:
 			_fell_in_water()
 
@@ -495,6 +498,7 @@ func _fell_in_water() -> void:
 	global_position = spawn_point
 	velocity = Vector3.ZERO
 	_invincible_time = invincible_seconds
+	fell_in_water.emit()
 
 
 ## Out of hearts! The corgi flops over. (main.gd shows the "You died!"

@@ -1,6 +1,7 @@
 extends "res://scripts/villager.gd"
-## Captain Salty, who sails the boat to the next island... once the
-## Corgiwizard's curse is broken.
+## Captain Salty sails the corgi between islands... once the Corgiwizard's
+## curse is broken. The same script works on both docks: he always offers
+## to take you to the island you're NOT on.
 
 
 func interact(_player_node: Node) -> void:
@@ -10,13 +11,23 @@ func interact(_player_node: Node) -> void:
 			"Ahoy there, little matey! I'm Captain Salty.",
 			"I'd love to sail ye to the next island...|but a dark curse hangs over these waters. Something wicked is coming, I can feel it in me whiskers!",
 		], _done_talking)
+	elif Game.stage == Game.Stage.BOSS2_FIGHT:
+		Game.say(npc_name, ["Not now, matey! There be a GIANT cyclops stompin' about!"], _done_talking)
+	elif Game.area == "forest":
+		var lines := ["Ready to sail back home, matey? Hop aboard!"]
+		if Game.stage == Game.Stage.FOREST_DONE:
+			lines = [
+				"Ye beat the Giant Cyclops! Arr, what a knight!",
+				"The seas beyond be too stormy for now... but I can take ye home!",
+			]
+		Game.say(npc_name, lines, _sail_to.bind("home"))
 	else:
 		Game.say(npc_name, [
 			"Arr! The curse be broken and the seas be calm!",
-			"All aboard for the next island!",
-		], _set_sail)
+			"All aboard for the Whispering Woods!",
+		], _sail_to.bind("forest"))
 
 
-func _set_sail() -> void:
+func _sail_to(destination: String) -> void:
 	_done_talking()
-	Game.next_island_requested.emit()
+	Game.travel_requested.emit(destination)

@@ -13,8 +13,10 @@ signal message(text: String)
 signal dialogue_requested(speaker: String, lines: Array, on_done: Callable)
 signal coins_changed(coins: int)
 signal shop_requested(shopkeeper: Node)
-## Captain Salty's boat is ready to go (the next island hooks in here).
-signal next_island_requested
+## Captain Salty is ready to sail ("forest" or "home").
+signal travel_requested(destination: String)
+## Time to drop a heart pickup here (every few enemies you defeat).
+signal heart_drop(where: Vector3)
 
 enum Stage {
 	WAKE_UP,        ## Sleeping in bed at the start
@@ -26,16 +28,22 @@ enum Stage {
 	DONE,           ## Got the red cape. Now buy all the armor at the shop...
 	BOSS_FIGHT,     ## The Corgiwizard summoned the King Slime!
 	SET_SAIL,       ## King Slime defeated: the boat to the next island is free
+	FOREST,         ## Exploring the Whispering Woods
+	BOSS2_FIGHT,    ## The Corgiwizard summoned the Giant Cyclops!
+	FOREST_DONE,    ## Giant Cyclops defeated
 }
+
+## Every this many enemies defeated, one drops a heart.
+@export var hearts_every := 3
 
 ## How many of each thing Mom asks for.
 @export var jelly_goal := 5
 @export var wood_goal := 5
 
 ## Nice names for the things you can collect.
-const ITEM_NAMES := {"jelly": "Slime Jelly", "wood": "Wood"}
-## How many coins the shop pays for each one.
-const SELL_PRICES := {"jelly": 3, "wood": 2}
+const ITEM_NAMES := {"jelly": "Slime Jelly", "wood": "Wood", "tooth": "Cyclops Tooth"}
+## How many coins the shops pay for each one.
+const SELL_PRICES := {"jelly": 3, "wood": 2, "tooth": 10}
 ## The armor you need to own before the Corgiwizard shows up.
 const ARMOR_PATHS: Array[String] = [
 	"res://scenes/equipment/leather_cap.tscn",
@@ -62,6 +70,13 @@ var _cutscene_count := 0
 var coins := 0
 ## Scene paths of things bought at the shop (so you can't buy them twice).
 var owned: Array[String] = []
+## Found the Slime Stone in the cave under the village well?
+var artifact_found := false
+## Where the corgi is right now: "home", "cave" or "forest".
+var area := "home"
+## Enemies defeated since the last heart dropped.
+var _kills := 0
+var _told_about_well := false
 
 ## Shortcut so older code can still ask for Game.jelly.
 var jelly: int:
@@ -76,6 +91,10 @@ func reset() -> void:
 	_cutscene_count = 0
 	coins = 0
 	owned = []
+	artifact_found = false
+	area = "home"
+	_kills = 0
+	_told_about_well = false
 
 
 func set_stage(new_stage: Stage) -> void:
@@ -129,6 +148,22 @@ func has_all_armor() -> bool:
 ## Call after buying something so the quest tracker updates.
 func notify_owned() -> void:
 	stage_changed.emit(stage)
+	if stage == Stage.DONE and has_all_armor() and not _told_about_well:
+		_told_about_well = true
+		message.emit("You hear a strange humming from the village well...")
+
+
+## The well cave opens once Mom's quests are done and you have all the armor.
+func cave_open() -> bool:
+	return stage == Stage.DONE and has_all_armor() and not artifact_found
+
+
+## Call when any bad guy is defeated. Every few, a heart drops.
+func enemy_defeated(where: Vector3) -> void:
+	_kills += 1
+	if _kills >= hearts_every:
+		_kills = 0
+		heart_drop.emit(where)
 
 
 ## Can the corgi move and act right now?
@@ -171,9 +206,19 @@ func quest_text() -> String:
 		Stage.DONE:
 			if not has_all_armor():
 				return "Buy all the armor at Biscuit's Shop (%d/%d)" % [armor_owned_count(), ARMOR_PATHS.size()]
+			if not artifact_found:
+				return "Climb down the village well and explore the cave"
 			return "Explore the island!"
 		Stage.BOSS_FIGHT:
 			return "Defeat the King Slime!"
 		Stage.SET_SAIL:
 			return "Find Captain Salty at the north dock"
+		Stage.FOREST:
+			if area == "forest":
+				return "Find what the Corgiwizard hid in the Whispering Woods"
+			return "Sail back to the Whispering Woods"
+		Stage.BOSS2_FIGHT:
+			return "Defeat the Giant Cyclops!"
+		Stage.FOREST_DONE:
+			return "Explore! (More islands coming soon)"
 	return ""

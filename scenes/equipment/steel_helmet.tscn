@@ -1,0 +1,45 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/equipment_item.gd" id="1_item"]
+[ext_resource type="Material" path="res://materials/steel_blue.tres" id="2_steel"]
+[ext_resource type="Material" path="res://materials/gold.tres" id="3_gold"]
+[ext_resource type="Material" path="res://materials/leaves.tres" id="4_green"]
+
+[sub_resource type="SphereMesh" id="Mesh_dome"]
+radius = 0.35
+height = 0.35
+is_hemisphere = true
+
+[sub_resource type="TorusMesh" id="Mesh_band"]
+inner_radius = 0.32
+outer_radius = 0.37
+
+[sub_resource type="CylinderMesh" id="Mesh_plume"]
+top_radius = 0.02
+bottom_radius = 0.09
+height = 0.3
+radial_segments = 12
+
+[node name="SteelHelmet" type="Node3D"]
+script = ExtResource("1_item")
+slot = "head"
+bonus_hearts = 2
+defense = 1
+display_name = "Steel Helmet"
+
+[node name="Dome" type="MeshInstance3D" parent="."]
+position = Vector3(0, -0.03, 0)
+scale = Vector3(1, 0.95, 1)
+mesh = SubResource("Mesh_dome")
+material_override = ExtResource("2_steel")
+
+[node name="Band" type="MeshInstance3D" parent="."]
+position = Vector3(0, -0.02, 0)
+mesh = SubResource("Mesh_band")
+material_override = ExtResource("3_gold")
+
+[node name="Plume" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.38, 0.08)
+rotation = Vector3(0.5, 0, 0)
+mesh = SubResource("Mesh_plume")
+material_override = ExtResource("4_green")

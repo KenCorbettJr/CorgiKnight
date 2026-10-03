@@ -52,8 +52,13 @@ func _process(delta: float) -> void:
 
 func _collect() -> void:
 	_collected = true
-	Game.add_item(kind, 1)
+	_give()
 	var tween := create_tween()
 	tween.tween_property(self, "scale", Vector3.ONE * 1.5, 0.08)
 	tween.tween_property(self, "scale", Vector3.ZERO, 0.15)
 	tween.tween_callback(queue_free)
+
+
+## What you get for picking it up. (Heart pickups change this to heal you.)
+func _give() -> void:
+	Game.add_item(kind, 1)

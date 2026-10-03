@@ -75,8 +75,8 @@ func _physics_process(delta: float) -> void:
 	var target_scale := Vector3(1.0 - stretch * 0.5, 1.0 + stretch, 1.0 - stretch * 0.5)
 	model.scale = model.scale.lerp(target_scale, clampf(12.0 * delta, 0.0, 1.0))
 
-	# Fell off the island? Pop back home.
-	if global_position.y < -2.0:
+	# Fell off the island (or out of the cave)? Pop back home.
+	if global_position.y < minf(_home.y, 0.0) - 3.0:
 		global_position = _home + Vector3.UP
 		velocity = Vector3.ZERO
 	# Knocked far away from home (like off the lookout)? Wobble back home.
@@ -142,6 +142,7 @@ func _die() -> void:
 	collision_layer = 0
 	died.emit(self)
 	_drop_jelly()
+	Game.enemy_defeated(global_position)
 	var tween := create_tween()
 	tween.tween_property(model, "scale", Vector3(1.7, 0.2, 1.7), 0.12)
 	tween.tween_property(model, "scale", Vector3.ZERO, 0.18)

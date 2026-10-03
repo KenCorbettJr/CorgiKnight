@@ -1,10 +1,14 @@
 extends Node
 ## The first boss battle!
 ##
-## Once the corgi has finished Mom's quests AND bought all the armor at
-## Biscuit's shop, the evil Corgiwizard shows up: the sky goes dark, the
-## villagers run and hide, and he summons the King Slime. Beat it to break
-## the curse and unlock Captain Salty's boat to the next island.
+## Once the corgi has finished Mom's quests and bought all the armor, the
+## village well starts to glow. Down in the cave below is the Slime Stone.
+## Taking it pulls the corgi back up... right into the evil Corgiwizard, who
+## grabs the stone's power: the sky goes dark, the villagers run and hide,
+## and he summons the King Slime. Beat it to break the curse and unlock
+## Captain Salty's boat to the next island.
+##
+## main.gd starts this by calling begin() after the stone is taken.
 
 const BOSS_SCENE := preload("res://scenes/king_slime_boss.tscn")
 
@@ -26,7 +30,6 @@ const BOSS_SCENE := preload("res://scenes/king_slime_boss.tscn")
 @onready var sun: DirectionalLight3D = $"../Sun"
 
 var _started := false
-var _waiting := 0.0
 var _boss: Node3D
 var _sky: ProceduralSkyMaterial
 
@@ -60,16 +63,11 @@ func _ready() -> void:
 	}
 
 
-func _process(delta: float) -> void:
+## Start the Corgiwizard scene (only once).
+func begin() -> void:
 	if _started:
 		return
-	# Wait until the corgi is free (not shopping or talking) for a moment.
-	if Game.stage == Game.Stage.DONE and Game.has_all_armor() and Game.can_play():
-		_waiting += delta
-		if _waiting > 1.5:
-			_start_boss_scene()
-	else:
-		_waiting = 0.0
+	_start_boss_scene()
 
 
 # ---------------------------------------------------------------- The big scene
@@ -95,8 +93,9 @@ func _start_boss_scene() -> void:
 	await _say("Corgiwizard", ["Mwahahaha! MWAHAHAHAHA!"])
 	wizard.set_laughing(false)
 	await _say("Corgiwizard", [
-		"So YOU'RE the little pup everyone's calling a knight?",
-		"Shiny armor won't save you.|I am going to destroy your village and put a curse on it!",
+		"You found the Slime Stone for me! How very kind, little knight.",
+		"I couldn't fit down that tiny well myself. Now its power is MINE!",
+		"I am going to destroy your village and put a curse on it!",
 	])
 
 	# Everybody run!

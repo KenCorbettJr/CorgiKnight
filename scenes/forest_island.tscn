@@ -1,0 +1,376 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/forest_island.gd" id="0_script"]
+[ext_resource type="PackedScene" path="res://scenes/stone_block.tscn" id="1_block"]
+[ext_resource type="PackedScene" path="res://scenes/dock.tscn" id="2_dock"]
+[ext_resource type="Script" path="res://scripts/campfire.gd" id="3_fire"]
+[ext_resource type="PackedScene" path="res://scenes/forest_shop.tscn" id="4_shop"]
+[ext_resource type="PackedScene" path="res://scenes/characters/villager.tscn" id="5_villager"]
+[ext_resource type="Script" path="res://scripts/artifact.gd" id="6_artifact"]
+[ext_resource type="PackedScene" path="res://scenes/cyclops.tscn" id="7_cyclops"]
+[ext_resource type="Material" path="res://materials/forest_grass.tres" id="m_grass"]
+[ext_resource type="Material" path="res://materials/sand.tres" id="m_sand"]
+[ext_resource type="Material" path="res://materials/water.tres" id="m_water"]
+[ext_resource type="Material" path="res://materials/bark.tres" id="m_bark"]
+[ext_resource type="Material" path="res://materials/rock.tres" id="m_rock"]
+[ext_resource type="Material" path="res://materials/flame.tres" id="m_flame"]
+[ext_resource type="Material" path="res://materials/tent.tres" id="m_tent"]
+[ext_resource type="Material" path="res://materials/blanket.tres" id="m_blanket"]
+[ext_resource type="Material" path="res://materials/apron.tres" id="m_apron"]
+[ext_resource type="Material" path="res://materials/acorn_gold.tres" id="m_gold"]
+
+[sub_resource type="CylinderShape3D" id="Shape_grass"]
+radius = 34.0
+height = 2.0
+
+[sub_resource type="CylinderMesh" id="Mesh_grass"]
+top_radius = 34.0
+bottom_radius = 34.5
+height = 2.0
+radial_segments = 96
+
+[sub_resource type="CylinderShape3D" id="Shape_sand"]
+radius = 36.0
+height = 2.0
+
+[sub_resource type="CylinderMesh" id="Mesh_sand"]
+top_radius = 36.0
+bottom_radius = 37.0
+height = 2.0
+radial_segments = 96
+
+[sub_resource type="PlaneMesh" id="Mesh_water"]
+size = Vector2(320, 320)
+
+[sub_resource type="CylinderShape3D" id="Shape_fire"]
+radius = 0.6
+height = 0.4
+
+[sub_resource type="CylinderMesh" id="Mesh_log"]
+top_radius = 0.08
+bottom_radius = 0.08
+height = 0.9
+radial_segments = 8
+
+[sub_resource type="SphereMesh" id="Mesh_stone"]
+radius = 0.12
+height = 0.14
+
+[sub_resource type="CylinderMesh" id="Mesh_flame"]
+top_radius = 0.0
+bottom_radius = 0.22
+height = 0.55
+radial_segments = 10
+
+[sub_resource type="CylinderMesh" id="Mesh_flame_small"]
+top_radius = 0.0
+bottom_radius = 0.13
+height = 0.35
+radial_segments = 8
+
+[sub_resource type="BoxShape3D" id="Shape_tent"]
+size = Vector3(2.4, 1.6, 2.8)
+
+[sub_resource type="PrismMesh" id="Mesh_tent"]
+size = Vector3(2.6, 1.8, 3.0)
+
+[sub_resource type="BoxMesh" id="Mesh_bedroll"]
+size = Vector3(1.9, 0.1, 0.9)
+
+[sub_resource type="BoxMesh" id="Mesh_pillow"]
+size = Vector3(0.4, 0.12, 0.7)
+
+[sub_resource type="CylinderMesh" id="Mesh_seat"]
+top_radius = 0.2
+bottom_radius = 0.2
+height = 1.2
+radial_segments = 10
+
+[sub_resource type="SphereMesh" id="Mesh_nut"]
+radius = 0.2
+height = 0.4
+
+[sub_resource type="SphereMesh" id="Mesh_cap"]
+radius = 0.23
+height = 0.23
+is_hemisphere = true
+
+[sub_resource type="CylinderMesh" id="Mesh_stem"]
+top_radius = 0.03
+bottom_radius = 0.04
+height = 0.12
+radial_segments = 6
+
+[node name="ForestIsland" type="Node3D"]
+script = ExtResource("0_script")
+
+[node name="Ground" type="StaticBody3D" parent="."]
+collision_layer = 1
+collision_mask = 0
+
+[node name="GrassShape" type="CollisionShape3D" parent="Ground"]
+position = Vector3(0, -1, 0)
+shape = SubResource("Shape_grass")
+
+[node name="Grass" type="MeshInstance3D" parent="Ground"]
+position = Vector3(0.000, -1.000, 0.000)
+mesh = SubResource("Mesh_grass")
+material_override = ExtResource("m_grass")
+
+[node name="SandShape" type="CollisionShape3D" parent="Ground"]
+position = Vector3(0, -1.3, 0)
+shape = SubResource("Shape_sand")
+
+[node name="Sand" type="MeshInstance3D" parent="Ground"]
+position = Vector3(0.000, -1.300, 0.000)
+mesh = SubResource("Mesh_sand")
+material_override = ExtResource("m_sand")
+
+[node name="Water" type="MeshInstance3D" parent="."]
+position = Vector3(0.000, -0.550, 0.000)
+mesh = SubResource("Mesh_water")
+material_override = ExtResource("m_water")
+
+[node name="Scenery" type="Node3D" parent="."]
+
+[node name="Dock" parent="." instance=ExtResource("2_dock")]
+position = Vector3(0, 0, 32)
+rotation = Vector3(0, 3.14159, 0)
+
+[node name="ArrivalSpot" type="Marker3D" parent="."]
+position = Vector3(0, 0.1, 29)
+
+[node name="ArrivalLook" type="Marker3D" parent="."]
+position = Vector3(0, 0.1, 20)
+
+[node name="CampBed" type="Marker3D" parent="."]
+position = Vector3(-2.6, 0.12, 18.8)
+
+[node name="WoodsSign" type="Label3D" parent="."]
+position = Vector3(2.8, 2.2, 27.5)
+billboard = 1
+modulate = Color(0.85, 1, 0.8, 1)
+outline_modulate = Color(0.1, 0.2, 0.08, 1)
+text = "Whispering Woods"
+font_size = 80
+outline_size = 16
+
+[node name="Campfire" type="StaticBody3D" parent="."]
+position = Vector3(0, 0, 20.5)
+collision_layer = 1
+collision_mask = 0
+script = ExtResource("3_fire")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Campfire"]
+position = Vector3(0, 0.2, 0)
+shape = SubResource("Shape_fire")
+
+[node name="Log1" type="MeshInstance3D" parent="Campfire"]
+position = Vector3(0.000, 0.100, 0.000)
+rotation = Vector3(0.0000, 0.5000, 1.5708)
+mesh = SubResource("Mesh_log")
+material_override = ExtResource("m_bark")
+
+[node name="Log2" type="MeshInstance3D" parent="Campfire"]
+position = Vector3(0.000, 0.100, 0.000)
+rotation = Vector3(0.0000, -0.6000, 1.5708)
+mesh = SubResource("Mesh_log")
+material_override = ExtResource("m_bark")
+
+[node name="Stone1" type="MeshInstance3D" parent="Campfire"]
+position = Vector3(0.550, 0.060, 0.000)
+mesh = SubResource("Mesh_stone")
+material_override = ExtResource("m_rock")
+
+[node name="Stone2" type="MeshInstance3D" parent="Campfire"]
+position = Vector3(0.343, 0.060, 0.430)
+mesh = SubResource("Mesh_stone")
+material_override = ExtResource("m_rock")
+
+[node name="Stone3" type="MeshInstance3D" parent="Campfire"]
+position = Vector3(-0.122, 0.060, 0.536)
+mesh = SubResource("Mesh_stone")
+material_override = ExtResource("m_rock")
+
+[node name="Stone4" type="MeshInstance3D" parent="Campfire"]
+position = Vector3(-0.496, 0.060, 0.239)
+mesh = SubResource("Mesh_stone")
+material_override = ExtResource("m_rock")
+
+[node name="Stone5" type="MeshInstance3D" parent="Campfire"]
+position = Vector3(-0.496, 0.060, -0.239)
+mesh = SubResource("Mesh_stone")
+material_override = ExtResource("m_rock")
+
+[node name="Stone6" type="MeshInstance3D" parent="Campfire"]
+position = Vector3(-0.122, 0.060, -0.536)
+mesh = SubResource("Mesh_stone")
+material_override = ExtResource("m_rock")
+
+[node name="Stone7" type="MeshInstance3D" parent="Campfire"]
+position = Vector3(0.343, 0.060, -0.430)
+mesh = SubResource("Mesh_stone")
+material_override = ExtResource("m_rock")
+
+[node name="Flame" type="Node3D" parent="Campfire"]
+position = Vector3(0, 0.15, 0)
+
+[node name="FlameMesh" type="MeshInstance3D" parent="Campfire/Flame"]
+position = Vector3(0.000, 0.250, 0.000)
+mesh = SubResource("Mesh_flame")
+material_override = ExtResource("m_flame")
+
+[node name="FlameInner" type="MeshInstance3D" parent="Campfire/Flame"]
+position = Vector3(0.080, 0.180, 0.050)
+mesh = SubResource("Mesh_flame_small")
+material_override = ExtResource("m_flame")
+
+[node name="Light" type="OmniLight3D" parent="Campfire"]
+position = Vector3(0, 0.8, 0)
+light_color = Color(1, 0.65, 0.3, 1)
+light_energy = 2.2
+omni_range = 7.0
+
+[node name="Tent" type="StaticBody3D" parent="."]
+position = Vector3(-4.8, 0, 21.5)
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Tent"]
+position = Vector3(0, 0.8, 0)
+shape = SubResource("Shape_tent")
+
+[node name="Canvas" type="MeshInstance3D" parent="Tent"]
+position = Vector3(0.000, 0.900, 0.000)
+mesh = SubResource("Mesh_tent")
+material_override = ExtResource("m_tent")
+
+[node name="Bedroll" type="MeshInstance3D" parent="."]
+position = Vector3(-2.600, 0.050, 18.800)
+mesh = SubResource("Mesh_bedroll")
+material_override = ExtResource("m_blanket")
+
+[node name="Pillow" type="MeshInstance3D" parent="."]
+position = Vector3(-3.400, 0.100, 18.800)
+mesh = SubResource("Mesh_pillow")
+material_override = ExtResource("m_apron")
+
+[node name="Seat1" type="MeshInstance3D" parent="."]
+position = Vector3(2.000, 0.200, 21.600)
+rotation = Vector3(0.0000, 0.3000, 1.5708)
+mesh = SubResource("Mesh_seat")
+material_override = ExtResource("m_bark")
+
+[node name="Seat2" type="MeshInstance3D" parent="."]
+position = Vector3(1.400, 0.200, 18.400)
+rotation = Vector3(0.0000, -0.5000, 1.5708)
+mesh = SubResource("Mesh_seat")
+material_override = ExtResource("m_bark")
+
+[node name="Shop" parent="." instance=ExtResource("4_shop")]
+position = Vector3(7, 0, 19.5)
+rotation = Vector3(0, -1.5708, 0)
+
+[node name="RangerRowan" parent="." instance=ExtResource("5_villager")]
+position = Vector3(-1.5, 0, 24.5)
+npc_name = "Ranger Rowan"
+fur_color = Color(0.6, 0.42, 0.25, 1)
+accessory = 1
+size = 1.05
+lines = Array[String](["Welcome to the Whispering Woods, little knight! I'm Ranger Rowan.", "Watch out for the mini cyclopses! Their clubs hurt a lot more than a slime bonk.|When they raise their club up high, get out of the way!", "Deep in the woods to the north there's an old stone shrine.|Lately it's been glowing a spooky gold...", "Cyclops teeth sell for good coins at Juniper's Trading Post!|Juniper has much tougher armor than Biscuit, too."])
+cape_lines = Array[String](["Welcome to the Whispering Woods, little knight! I'm Ranger Rowan.", "Watch out for the mini cyclopses! Their clubs hurt a lot more than a slime bonk.|When they raise their club up high, get out of the way!", "Deep in the woods to the north there's an old stone shrine.|Lately it's been glowing a spooky gold...", "Cyclops teeth sell for good coins at Juniper's Trading Post!|Juniper has much tougher armor than Biscuit, too."])
+
+[node name="Shrine" type="Node3D" parent="."]
+position = Vector3(0, 0, -23)
+
+[node name="Altar" parent="Shrine" instance=ExtResource("1_block")]
+position = Vector3(0.000, 0.000, 0.000)
+size = Vector3(1.4, 1.0, 1.4)
+
+[node name="Stone1" parent="Shrine" instance=ExtResource("1_block")]
+position = Vector3(7.500, 0.000, 0.000)
+rotation = Vector3(0, 1.5708, 0)
+size = Vector3(0.9, 2.6, 0.7)
+
+[node name="Stone2" parent="Shrine" instance=ExtResource("1_block")]
+position = Vector3(3.750, 0.000, 6.495)
+rotation = Vector3(0, 0.5236, 0)
+size = Vector3(0.9, 2.6, 0.7)
+
+[node name="Stone3" parent="Shrine" instance=ExtResource("1_block")]
+position = Vector3(-3.750, 0.000, 6.495)
+rotation = Vector3(0, -0.5236, 0)
+size = Vector3(0.9, 2.6, 0.7)
+
+[node name="Stone4" parent="Shrine" instance=ExtResource("1_block")]
+position = Vector3(-7.500, 0.000, 0.000)
+rotation = Vector3(0, -1.5708, 0)
+size = Vector3(0.9, 2.6, 0.7)
+
+[node name="Stone5" parent="Shrine" instance=ExtResource("1_block")]
+position = Vector3(-3.750, 0.000, -6.495)
+rotation = Vector3(0, -2.6180, 0)
+size = Vector3(0.9, 2.6, 0.7)
+
+[node name="Stone6" parent="Shrine" instance=ExtResource("1_block")]
+position = Vector3(3.750, 0.000, -6.495)
+rotation = Vector3(0, -3.6652, 0)
+size = Vector3(0.9, 2.6, 0.7)
+
+[node name="GoldenAcorn" type="Node3D" parent="Shrine"]
+position = Vector3(0, 1.45, 0)
+script = ExtResource("6_artifact")
+item_name = "Golden Acorn"
+prompt_text = "Take the Golden Acorn"
+on_taken = "take_forest_artifact"
+
+[node name="Visual" type="Node3D" parent="Shrine/GoldenAcorn"]
+
+[node name="Nut" type="MeshInstance3D" parent="Shrine/GoldenAcorn/Visual"]
+position = Vector3(0.000, -0.030, 0.000)
+scale = Vector3(1, 1.25, 1)
+mesh = SubResource("Mesh_nut")
+material_override = ExtResource("m_gold")
+
+[node name="Cap" type="MeshInstance3D" parent="Shrine/GoldenAcorn/Visual"]
+position = Vector3(0.000, 0.110, 0.000)
+mesh = SubResource("Mesh_cap")
+material_override = ExtResource("m_bark")
+
+[node name="Stem" type="MeshInstance3D" parent="Shrine/GoldenAcorn/Visual"]
+position = Vector3(0.000, 0.300, 0.000)
+mesh = SubResource("Mesh_stem")
+material_override = ExtResource("m_bark")
+
+[node name="Glow" type="OmniLight3D" parent="Shrine/GoldenAcorn"]
+light_color = Color(1, 0.8, 0.3, 1)
+light_energy = 2.0
+omni_range = 7.0
+
+[node name="Cyclops1" parent="." instance=ExtResource("7_cyclops")]
+position = Vector3(-12, 0.1, 4)
+skin_color = Color(0.55, 0.78, 0.45, 1)
+
+[node name="Cyclops2" parent="." instance=ExtResource("7_cyclops")]
+position = Vector3(9, 0.1, 5)
+skin_color = Color(0.5, 0.72, 0.6, 1)
+
+[node name="Cyclops3" parent="." instance=ExtResource("7_cyclops")]
+position = Vector3(-7, 0.1, -5)
+skin_color = Color(0.62, 0.8, 0.42, 1)
+
+[node name="Cyclops4" parent="." instance=ExtResource("7_cyclops")]
+position = Vector3(11, 0.1, -10)
+skin_color = Color(0.55, 0.78, 0.45, 1)
+
+[node name="Cyclops5" parent="." instance=ExtResource("7_cyclops")]
+position = Vector3(-12, 0.1, -13)
+skin_color = Color(0.5, 0.72, 0.6, 1)
+
+[node name="Cyclops6" parent="." instance=ExtResource("7_cyclops")]
+position = Vector3(5, 0.1, -15)
+skin_color = Color(0.62, 0.8, 0.42, 1)
+
+[node name="Cyclops7" parent="." instance=ExtResource("7_cyclops")]
+position = Vector3(-5, 0.1, -17)
+skin_color = Color(0.55, 0.78, 0.45, 1)

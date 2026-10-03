@@ -22,6 +22,11 @@
 [ext_resource type="PackedScene" path="res://scenes/characters/corgiwizard.tscn" id="20_wizard"]
 [ext_resource type="PackedScene" path="res://scenes/dock.tscn" id="21_dock"]
 [ext_resource type="Script" path="res://scripts/boss_event.gd" id="22_boss_event"]
+[ext_resource type="Script" path="res://scripts/well.gd" id="23_well"]
+[ext_resource type="PackedScene" path="res://scenes/cave.tscn" id="24_cave"]
+[ext_resource type="Material" path="res://materials/leather.tres" id="25_rope"]
+[ext_resource type="PackedScene" path="res://scenes/forest_island.tscn" id="26_forest"]
+[ext_resource type="Script" path="res://scripts/forest_boss_event.gd" id="27_forest_boss"]
 
 [sub_resource type="ProceduralSkyMaterial" id="SkyMat"]
 sky_top_color = Color(0.32, 0.58, 0.95, 1)
@@ -77,6 +82,12 @@ top_radius = 0.9
 bottom_radius = 0.9
 height = 0.02
 radial_segments = 24
+
+[sub_resource type="CylinderMesh" id="Mesh_well_rope"]
+top_radius = 0.04
+bottom_radius = 0.04
+height = 1.9
+radial_segments = 8
 
 [sub_resource type="PlaneMesh" id="Mesh_water"]
 size = Vector2(400, 400)
@@ -165,6 +176,20 @@ roof_material = ExtResource("14_roof_green")
 position = Vector3(0, 0, 14)
 collision_layer = 1
 collision_mask = 0
+script = ExtResource("23_well")
+
+[node name="Glow" type="OmniLight3D" parent="Village/Well"]
+position = Vector3(0, 0.9, 0)
+visible = false
+light_color = Color(0.7, 0.4, 1, 1)
+light_energy = 2.0
+omni_range = 4.0
+
+[node name="Rope" type="MeshInstance3D" parent="Village/Well"]
+position = Vector3(0, 1.55, 0)
+visible = false
+mesh = SubResource("Mesh_well_rope")
+material_override = ExtResource("25_rope")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Village/Well"]
 position = Vector3(0, 0.35, 0)
@@ -273,6 +298,9 @@ contact_damage = 2
 chase_range = 6.0
 wander_radius = 1.0
 
+[node name="Cave" parent="." instance=ExtResource("24_cave")]
+position = Vector3(0, -40, 0)
+
 [node name="Dock" parent="." instance=ExtResource("21_dock")]
 position = Vector3(0, 0, -29)
 
@@ -285,5 +313,11 @@ fov = 60.0
 
 [node name="BossEvent" type="Node" parent="."]
 script = ExtResource("22_boss_event")
+
+[node name="ForestIsland" parent="." instance=ExtResource("26_forest")]
+position = Vector3(1200, 0, 0)
+
+[node name="ForestBossEvent" type="Node" parent="."]
+script = ExtResource("27_forest_boss")
 
 [node name="HUD" parent="." instance=ExtResource("4_hud")]

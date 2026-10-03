@@ -32,13 +32,15 @@ There are two camera styles. Press **C** to switch:
 | Talk | E | Y |
 | Free the mouse | Esc (click to grab it again) | — |
 
-If you run out of hearts, you'll see **You died!** and then wake up back in your bed with full hearts.
+If you run out of hearts, you'll see **You died!** and then wake up back in your bed with full hearts. Every 3rd bad guy you defeat drops a floating **heart** that refills one heart.
 
 **Story:** you wake up in bed in your little house. Talk to **Mom** (walk up to her and press **E**) and she'll give you a **Wooden Sword**. Then head outside, bonk slimes, and collect **5 Slime Jelly** (each bonked slime drops one, and slimes come back after a while). Bring the jelly home and Mom gives you her old **Axe**: chop down trees (a few swings each; they grow back later) and collect **5 Wood** for the stove. Bring it home and Mom gives you a **Red Cape** that flutters when you run and gives you an extra heart! The purple King Slime waits on top of the stone lookout (it hits twice as hard!).
 
 **The village:** just south of home is Corgi Village, with Old Barnaby, little Pip, Maple and Clover to chat with. At **Biscuit's Shop** you can sell extra Slime Jelly (3 coins each) and Wood (2 coins each) and buy gear: Leather Cap, Wooden Shield, Speedy Boots, Iron Helmet and Iron Sword. The shop never buys the jelly or wood Mom's quest still needs.
 
-**The first boss:** once you've finished Mom's quests and own all four pieces of armor (Leather Cap, Wooden Shield, Speedy Boots, Iron Helmet), the evil **Corgiwizard** appears over the village well. The sky goes dark, everyone runs and hides, and he summons the **King Slime**! It hops after you and every third hop leaps high and slams down with a shockwave, so **jump** to dodge it. At half health it turns red, gets faster and calls in two helper slimes. Beat it to break the curse, bring the sun back, and unlock **Captain Salty's** boat at the north dock. (The next island is coming soon!)
+**The well cave and the first boss:** once you've finished Mom's quests and own all four pieces of armor (Leather Cap, Wooden Shield, Speedy Boots, Iron Helmet), the village well starts to glow purple and a rope appears. Climb down (press **E** at the well) into the **Well Cave**: fight the cave slimes, follow the glowing crystals through the tunnel, and find the **Slime Stone** on its pedestal. Taking it pulls you back up to the village... where the evil **Corgiwizard** has been waiting for someone to fetch it! He appears over the village well. The sky goes dark, everyone runs and hides, and he summons the **King Slime**! It hops after you and every third hop leaps high and slams down with a shockwave, so **jump** to dodge it. At half health it turns red, gets faster and calls in two helper slimes. Beat it to break the curse, bring the sun back, and unlock **Captain Salty's** boat at the north dock.
+
+**Island 2, the Whispering Woods:** talk to Captain Salty to sail to a thick forest island (and back home whenever you like). Ranger Rowan runs the camp by the dock, and **Juniper's Trading Post** sells tougher gear: Chainmail, Knight Shield, Forest Boots, Steel Helmet and Steel Sword. The woods are full of **mini cyclopses**: they raise their club high and SMASH (2 hearts!), so watch for the wind-up and dodge, or bonk them first to interrupt. Each one drops a **Cyclops Tooth** (sells for 10 coins) and **5 coins**. Follow the path north to the old stone shrine and take the **Golden Acorn**... and the Corgiwizard comes back, furious that you keep finding his hidden treasures! He summons the **Giant Cyclops**: stay out of the way of its club smash (hit it while it pulls the club back up), and **jump** its stomp shockwave. At half health it gets furious and calls in two mini cyclopses. (More islands coming soon!)
 
 ## What's in here
 
@@ -48,6 +50,12 @@ scenes/
   main.tscn         The island: sky, sun, ground, water, the house, the lookout, slimes
   house.tscn        The corgi's cottage: bed, table, lamp, and Mom
   dock.tscn         The north dock, Captain Salty and his boat
+  cave.tscn         The Well Cave (under the island) with the Slime Stone
+  forest_island.tscn  Island 2: the Whispering Woods (camp, shop, shrine, cyclopses)
+  forest_shop.tscn  Juniper's Trading Post
+  cyclops.tscn      A mini cyclops enemy
+  boss_cyclops.tscn The second boss
+  heart_pickup.tscn A heart that refills health
   king_slime_boss.tscn  The first boss
   cottage.tscn      A village cottage (pick wall and roof colors in the Inspector)
   shop_stall.tscn   Biscuit's Shop: what it sells and the prices are on the Biscuit node
@@ -76,6 +84,8 @@ materials/          Toon-shaded colors + the cartoon outline
 - **Recolor everything:** double-click a file in `materials/` to change its color.
 - **Change what Mom says:** open `scripts/mom.gd`. All her lines are in quotes and easy to edit.
 - **Make a new villager:** open `scenes/main.tscn`, drag `characters/villager.tscn` in, and set their Name, Fur Color, Size, Accessory and Lines in the Inspector. Put a `|` in a line to split it into two speech bubbles.
+- **Hearts more often:** open `scripts/game_state.gd` and change `hearts_every := 3` to a smaller number.
+- **Tune the cyclopses:** open `scenes/cyclops.tscn` (or click one in `forest_island.tscn`) and change Club Damage, Wind-up Seconds or Max Health.
 - **Tune the boss:** open `scenes/king_slime_boss.tscn` and change Max Health, Hop Speed, Slam Every or Shockwave Radius.
 - **Change the shop:** open `scenes/shop_stall.tscn`, click Biscuit, and edit Stock and Prices.
 - **Make the quest harder:** open `scripts/game_state.gd` and change `jelly_goal := 5` or `wood_goal := 5` to bigger numbers.
@@ -97,8 +107,7 @@ To make a new item:
 ## Next steps
 
 - Swap the shape-corgi for a real animated model (e.g. the Shiba Inu from Quaternius' free animal pack, or a custom one made in Blender).
-- Heart pickups that heal the corgi.
 - A treasure chest with a better sword or armor inside.
 - More quests from the villagers.
-- The next island! (Hook it up in `_on_next_island_requested()` in `scripts/main.gd`.)
+- Island 3! (Captain Salty sails using `travel_requested` and `_on_travel_requested()` in `scripts/main.gd`.)
 - A dodge roll and a lock-on camera.

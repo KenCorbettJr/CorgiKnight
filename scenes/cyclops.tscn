@@ -1,0 +1,19 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/cyclops.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://scenes/characters/cyclops_model.tscn" id="2_model"]
+
+[sub_resource type="CapsuleShape3D" id="Shape_cyclops"]
+radius = 0.4
+height = 1.7
+
+[node name="Cyclops" type="CharacterBody3D"]
+collision_layer = 4
+collision_mask = 1
+script = ExtResource("1_script")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+position = Vector3(0, 0.85, 0)
+shape = SubResource("Shape_cyclops")
+
+[node name="Model" parent="." instance=ExtResource("2_model")]

@@ -1,0 +1,47 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/equipment_item.gd" id="1_item"]
+[ext_resource type="Material" path="res://materials/steel_blue.tres" id="2_steel"]
+[ext_resource type="Material" path="res://materials/gold.tres" id="3_gold"]
+[ext_resource type="Material" path="res://materials/leather.tres" id="4_leather"]
+[ext_resource type="Material" path="res://materials/crystal_cyan.tres" id="5_gem"]
+
+[sub_resource type="BoxMesh" id="Mesh_grip"]
+size = Vector3(0.05, 0.05, 0.2)
+
+[sub_resource type="BoxMesh" id="Mesh_guard"]
+size = Vector3(0.34, 0.06, 0.06)
+
+[sub_resource type="BoxMesh" id="Mesh_blade"]
+size = Vector3(0.045, 0.13, 0.9)
+
+[sub_resource type="SphereMesh" id="Mesh_gem"]
+radius = 0.045
+height = 0.09
+
+[node name="SteelSword" type="Node3D"]
+script = ExtResource("1_item")
+slot = "weapon"
+damage = 3
+reach = 2.0
+display_name = "Steel Sword"
+
+[node name="Grip" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0, 0.03)
+mesh = SubResource("Mesh_grip")
+material_override = ExtResource("4_leather")
+
+[node name="Guard" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0, -0.09)
+mesh = SubResource("Mesh_guard")
+material_override = ExtResource("3_gold")
+
+[node name="Gem" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.04, -0.09)
+mesh = SubResource("Mesh_gem")
+material_override = ExtResource("5_gem")
+
+[node name="Blade" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0, -0.56)
+mesh = SubResource("Mesh_blade")
+material_override = ExtResource("2_steel")
