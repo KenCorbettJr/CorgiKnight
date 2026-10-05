@@ -1,8 +1,10 @@
 # Godot 4 builds this cache folder itself; don't commit it.
 .godot/
 
-# Export settings can contain passwords/keys for app stores.
-export_presets.cfg
+# Built output — never commit builds (web exports, zips, binaries).
+build/
+export/
+*.zip
 
 # macOS junk
 .DS_Store
