@@ -72,6 +72,9 @@ var coins := 0
 var owned: Array[String] = []
 ## Found the Slime Stone in the cave under the village well?
 var artifact_found := false
+## Names of the magic treasures you've found (Slime Stone, Golden Acorn...),
+## shown in the inventory.
+var treasures: Array[String] = []
 ## Where the corgi is right now: "home", "cave" or "forest".
 var area := "home"
 ## Enemies defeated since the last heart dropped.
@@ -92,6 +95,7 @@ func reset() -> void:
 	coins = 0
 	owned = []
 	artifact_found = false
+	treasures = []
 	area = "home"
 	_kills = 0
 	_told_about_well = false

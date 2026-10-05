@@ -30,6 +30,7 @@ There are two camera styles. Press **C** to switch:
 | Swing sword / axe | Left click / J | X |
 | Switch weapon | Q | Right bumper |
 | Talk | E | Y |
+| Inventory (pauses the game; click gear to wear it) | I | Back / View / Select |
 | Free the mouse | Esc (click to grab it again) | — |
 
 If you run out of hearts, you'll see **You died!** and then wake up back in your bed with full hearts. Every 3rd bad guy you defeat drops a floating **heart** that refills one heart.

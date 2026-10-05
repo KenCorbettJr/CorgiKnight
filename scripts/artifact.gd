@@ -33,6 +33,8 @@ func interact(_player: Node) -> void:
 		return
 	_taken = true
 	remove_from_group("interactable")
+	if not Game.treasures.has(item_name):
+		Game.treasures.append(item_name)
 	Game.item_received.emit(item_name)
 	# It flares up bright... then vanishes into the corgi's paws.
 	var tween := create_tween()

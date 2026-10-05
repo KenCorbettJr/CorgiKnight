@@ -88,6 +88,9 @@ var _just_grabbed_mouse := false
 var _interact_target: Node3D
 ## Every weapon the corgi owns. Press Q to switch between them.
 var weapons: Array[PackedScene] = []
+## Every piece of gear (not weapons) the corgi has ever put on, so the
+## inventory can show it and let you wear it again.
+var gear: Array[PackedScene] = []
 var _weapon_index := 0
 var _base_max_health := 0
 var _hint_cooldown := 0.0
@@ -264,6 +267,8 @@ func equip(item_scene: PackedScene) -> EquipmentItem:
 		item.queue_free()
 		return null
 	unequip(item.slot)
+	if item.slot != "weapon" and not gear.has(item_scene):
+		gear.append(item_scene)
 	var targets: Array = sockets[item.slot]
 	for i in targets.size():
 		# Boots need one copy per foot; everything else uses the first copy.
