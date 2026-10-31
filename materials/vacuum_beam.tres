@@ -1,0 +1,15 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+; The see-through cone of "suck" that comes out of the Ghost Sucker's nozzle.
+; A soft glowing cyan you can see straight through, so it reads as a beam of
+; pull rather than a solid shape. No toon outline on this one — beams of
+; magic air don't have ink lines!
+
+[resource]
+transparency = 1
+cull_mode = 2
+shading_mode = 0
+albedo_color = Color(0.55, 0.95, 1.0, 0.28)
+emission_enabled = true
+emission = Color(0.6, 0.95, 1.0, 1)
+emission_energy_multiplier = 1.4

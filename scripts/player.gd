@@ -97,6 +97,11 @@ var _hint_cooldown := 0.0
 ## Speedy Boots and friends make this bigger than 1.
 var _speed_multiplier := 1.0
 var _fainted := false
+## Ghosts currently caught in the vacuum beam this frame -> true. Used to spot
+## ghosts that drifted out of the beam so we can let them wriggle free.
+var _ghosts_in_beam: Dictionary = {}
+## true while the Ghost Sucker beam is actually running (button held).
+var _vacuuming := false
 
 
 func _ready() -> void:
@@ -219,13 +224,25 @@ func _physics_process(delta: float) -> void:
 		var target_yaw := atan2(-direction.x, -direction.z)
 		model.rotation.y = lerp_angle(model.rotation.y, target_yaw, clampf(12.0 * delta, 0.0, 1.0))
 
-	# Sword
-	var wants_attack := Input.is_action_just_pressed("attack") and not _just_grabbed_mouse
-	if wants_attack and _attack_cooldown <= 0.0 and can_act and equipped.has("weapon"):
-		_start_attack()
+	# Attack. A normal weapon (sword / axe) SWINGS on a button press. A vacuum
+	# weapon (the Ghost Sucker) runs its beam the whole time you HOLD the button.
+	# We pick which one to do from the equipped weapon so every old weapon keeps
+	# working exactly the same as before.
+	var weapon: EquipmentItem = equipped.get("weapon")
+	if weapon != null and weapon.is_vacuum:
+		# Hold-to-vacuum. Ignore the click that grabbed the mouse back.
+		var holding := Input.is_action_pressed("attack") and not _just_grabbed_mouse and can_act and not _fainted
+		_update_vacuum(holding, delta)
+	else:
+		# The original sword / axe swing — unchanged.
+		if _vacuuming:
+			_stop_vacuum()  # just swapped off the vacuum: make sure the beam's off
+		var wants_attack := Input.is_action_just_pressed("attack") and not _just_grabbed_mouse
+		if wants_attack and _attack_cooldown <= 0.0 and can_act and equipped.has("weapon"):
+			_start_attack()
+		if _attacking and not _fainted:
+			_check_sword_hits()
 	_just_grabbed_mouse = false
-	if _attacking and not _fainted:
-		_check_sword_hits()
 
 	# Switch between sword and axe.
 	if Input.is_action_just_pressed("switch_weapon") and can_act and not _arm_busy:
@@ -399,6 +416,70 @@ func wake_up() -> void:
 	await tween.finished
 	_squash(Vector3(0.8, 1.25, 0.8))
 	velocity.y = 3.5
+
+
+# ---------------------------------------------------------------- Ghost Sucker
+
+## Runs every frame while the Ghost Sucker is equipped. `active` is whether the
+## attack button is held right now. While active, a cone-shaped beam reaches
+## out of the nozzle, pulls any ghosts in range toward it, and tells each ghost
+## it's in the beam (the ghost itself counts the hold time and catches itself).
+func _update_vacuum(active: bool, delta: float) -> void:
+	var weapon: EquipmentItem = equipped.get("weapon")
+	if weapon == null:
+		_stop_vacuum()
+		return
+
+	# Turn the beam mesh + swirl particles on/off to match.
+	if active != _vacuuming:
+		_vacuuming = active
+		weapon.set_vacuuming(active)
+		if active:
+			# A soft slurpy squash while vacuuming (reuses the swing wind-up).
+			_squash(Vector3(0.95, 1.08, 0.95))
+
+	# Which ghosts are inside the cone this frame.
+	var still_in_beam: Dictionary = {}
+	if active:
+		var nozzle := weapon.nozzle_point()
+		# The beam points the way the corgi is facing.
+		var forward := -model.global_transform.basis.z
+		forward.y = 0.0
+		forward = forward.normalized()
+		var cos_limit := cos(deg_to_rad(weapon.beam_angle))
+
+		for ghost in get_tree().get_nodes_in_group("ghosts"):
+			var node := ghost as Node3D
+			if node == null or not node.has_method("suck_toward"):
+				continue
+			var to_ghost := node.global_position - nozzle
+			var distance := to_ghost.length()
+			if distance > weapon.beam_range:
+				continue
+			# Inside the cone? (Point the ghost is in the beam's facing arc.)
+			var in_cone := distance < 0.4 or forward.dot(to_ghost / distance) >= cos_limit
+			if not in_cone:
+				continue
+			still_in_beam[node] = true
+			node.call("suck_toward", nozzle, delta)
+
+	# Any ghost that was in the beam last frame but isn't now gets to recover.
+	for ghost in _ghosts_in_beam.keys():
+		if not still_in_beam.has(ghost) and is_instance_valid(ghost) and ghost.has_method("leave_beam"):
+			ghost.call("leave_beam")
+	_ghosts_in_beam = still_in_beam
+
+
+## Switch the beam off and let any held ghosts recover. Safe to call anytime.
+func _stop_vacuum() -> void:
+	_vacuuming = false
+	var weapon: EquipmentItem = equipped.get("weapon")
+	if weapon != null and weapon.has_method("set_vacuuming"):
+		weapon.set_vacuuming(false)
+	for ghost in _ghosts_in_beam.keys():
+		if is_instance_valid(ghost) and ghost.has_method("leave_beam"):
+			ghost.call("leave_beam")
+	_ghosts_in_beam = {}
 
 
 # ---------------------------------------------------------------- Sword
