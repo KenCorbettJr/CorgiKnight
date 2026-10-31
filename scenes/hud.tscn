@@ -58,6 +58,44 @@ theme_override_constants/outline_size = 8
 theme_override_font_sizes/font_size = 22
 text = "Coins: 0"
 
+[node name="ScareMeter" type="Control" parent="."]
+visible = false
+layout_mode = 3
+anchors_preset = 0
+offset_left = 20.0
+offset_top = 104.0
+offset_right = 260.0
+offset_bottom = 148.0
+mouse_filter = 2
+
+[node name="ScareLabel" type="Label" parent="."]
+visible = false
+layout_mode = 3
+anchors_preset = 0
+offset_left = 22.0
+offset_top = 146.0
+offset_right = 320.0
+offset_bottom = 180.0
+theme_override_colors/font_color = Color(0.8, 0.95, 0.75, 1)
+theme_override_colors/font_outline_color = Color(0.1, 0.05, 0.12, 1)
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/font_size = 22
+text = "Scare"
+
+[node name="GhostEnergyLabel" type="Label" parent="."]
+visible = false
+layout_mode = 3
+anchors_preset = 0
+offset_left = 22.0
+offset_top = 178.0
+offset_right = 360.0
+offset_bottom = 212.0
+theme_override_colors/font_color = Color(0.7, 1, 0.85, 1)
+theme_override_colors/font_outline_color = Color(0.1, 0.05, 0.12, 1)
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/font_size = 22
+text = "Ghost Energy: 0"
+
 [node name="QuestLabel" type="Label" parent="."]
 layout_mode = 3
 anchors_preset = 1
@@ -282,6 +320,62 @@ theme_override_colors/font_color = Color(0.55, 0.4, 0.3, 1)
 theme_override_font_sizes/font_size = 16
 text = "Click, or use arrow keys + Enter.  Esc to leave."
 horizontal_alignment = 1
+
+[node name="ChoiceOverlay" type="Control" parent="."]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Dim" type="ColorRect" parent="ChoiceOverlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.35)
+
+[node name="ChoicePanel" type="PanelContainer" parent="ChoiceOverlay"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -320.0
+offset_top = -150.0
+offset_right = 320.0
+offset_bottom = 150.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("Style_dialogue")
+
+[node name="Margin" type="MarginContainer" parent="ChoiceOverlay/ChoicePanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 28
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 28
+theme_override_constants/margin_bottom = 18
+
+[node name="VBox" type="VBoxContainer" parent="ChoiceOverlay/ChoicePanel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Prompt" type="Label" parent="ChoiceOverlay/ChoicePanel/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.42, 0.18, 1)
+theme_override_font_sizes/font_size = 26
+text = "Where to?"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="Options" type="VBoxContainer" parent="ChoiceOverlay/ChoicePanel/Margin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 6
 
 [node name="InventoryOverlay" type="Control" parent="."]
 visible = false

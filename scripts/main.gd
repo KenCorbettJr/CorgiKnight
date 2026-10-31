@@ -20,6 +20,7 @@ const HEART_SCENE := preload("res://scenes/heart_pickup.tscn")
 @onready var scenery: Node3D = $Scenery
 @onready var cave: Node3D = $Cave
 @onready var forest: Node3D = $ForestIsland
+@onready var haunted: Node3D = $HauntedIsland
 @onready var env: Environment = ($WorldEnvironment as WorldEnvironment).environment
 
 ## Where the corgi arrives at each dock.
@@ -31,6 +32,10 @@ var _area_light := {}
 ## Where the corgi sleeps (and wakes up after dying) on each island.
 var _beds := {}
 var _visited_forest := false
+var _visited_haunted := false
+## The weapon the corgi was holding before picking up the Ghost Sucker, so we
+## can hand it back when they sail home from the haunted island.
+var _weapon_before_haunted: PackedScene = null
 
 
 func _ready() -> void:
@@ -47,8 +52,14 @@ func _ready() -> void:
 		"home": sunny,
 		"cave": {"ambient": 0.3, "fog_color": Color(0.12, 0.12, 0.22), "fog_density": 0.05},
 		"forest": {"ambient": 0.75, "fog_color": Color(0.55, 0.75, 0.55), "fog_density": 0.014},
+		# Spooky purple-green night with thick fog.
+		"haunted": {"ambient": 0.45, "fog_color": Color(0.3, 0.42, 0.35), "fog_density": 0.03},
 	}
-	_beds = {"home": player.spawn_point, "forest": forest.get_node("CampBed").global_position}
+	_beds = {
+		"home": player.spawn_point,
+		"forest": forest.get_node("CampBed").global_position,
+		"haunted": haunted.get_node("HauntedBed").global_position,
+	}
 
 	player.health_changed.connect(hud.set_health)
 	hud.set_health(player.health, player.max_health)
@@ -57,6 +68,7 @@ func _ready() -> void:
 	player.died.connect(_on_player_died)
 	Game.heart_drop.connect(_on_heart_drop)
 	player.fell_in_water.connect(_on_fell_in_water)
+	Game.haunted_reset.connect(_on_haunted_reset)
 
 	_play_intro()
 
@@ -74,7 +86,11 @@ func _on_heart_drop(where: Vector3) -> void:
 
 ## Which island's bed the corgi wakes up in.
 func _bed_area() -> String:
-	return "forest" if Game.area == "forest" else "home"
+	if Game.area == "forest":
+		return "forest"
+	if Game.area == "haunted":
+		return "haunted"
+	return "home"
 
 
 ## Out of hearts: show "You died!", wait, then wake up in bed.
@@ -104,10 +120,29 @@ func _set_area(area: String) -> void:
 		env.ambient_light_energy = light["ambient"]
 		env.fog_light_color = light["fog_color"]
 		env.fog_density = light["fog_density"]
+	# The haunted island turns the sky to a dim purple-green night.
+	_set_spooky_sky(area == "haunted")
 	player.fall_limit = cave.global_position.y - 5.0 if area == "cave" else -2.0
 	if _beds.has(area):
 		player.spawn_point = _beds[area]
 	Game.notify_owned()  # refresh the quest text
+
+
+## Swap the bright day sky for a spooky night one (and back).
+func _set_spooky_sky(spooky: bool) -> void:
+	var sky_mat := env.sky.sky_material as ProceduralSkyMaterial
+	if sky_mat == null:
+		return
+	if spooky:
+		sky_mat.sky_top_color = Color(0.06, 0.05, 0.12)
+		sky_mat.sky_horizon_color = Color(0.2, 0.28, 0.25)
+		sky_mat.ground_bottom_color = Color(0.05, 0.08, 0.07)
+		sky_mat.ground_horizon_color = Color(0.2, 0.28, 0.25)
+	else:
+		sky_mat.sky_top_color = Color(0.32, 0.58, 0.95)
+		sky_mat.sky_horizon_color = Color(0.78, 0.9, 1.0)
+		sky_mat.ground_bottom_color = Color(0.25, 0.45, 0.7)
+		sky_mat.ground_horizon_color = Color(0.78, 0.9, 1.0)
 
 
 # ---------------------------------------------------------------- The well cave
@@ -177,27 +212,100 @@ func take_forest_artifact() -> void:
 ## Captain Salty sails the corgi between the islands.
 func _on_travel_requested(destination: String) -> void:
 	Game.in_cutscene = true
+	# Leaving the haunted island? Put the corgi's old weapon back (the Ghost
+	# Sucker stays on the haunted island).
+	if Game.area == "haunted" and destination != "haunted":
+		_restore_weapon_after_haunted()
 	await hud.fade_out(0.8)
-	var going_to_forest := destination == "forest"
-	hud.set_fade_text("Sailing to the Whispering Woods..." if going_to_forest else "Sailing home...")
+	var fade_text := "Sailing home..."
+	if destination == "forest":
+		fade_text = "Sailing to the Whispering Woods..."
+	elif destination == "haunted":
+		fade_text = "Sailing to the haunted island..."
+	hud.set_fade_text(fade_text)
 	await get_tree().create_timer(2.2).timeout
 	hud.set_fade_text("")
-	if going_to_forest:
-		_set_area("forest")
-		player.place_at(forest.get_node("ArrivalSpot").global_position, forest.get_node("ArrivalLook").global_position)
-		if Game.stage == Game.Stage.SET_SAIL:
-			Game.set_stage(Game.Stage.FOREST)
-	else:
-		_set_area("home")
-		player.place_at(HOME_DOCK_SPOT, Vector3(0, 0.1, 0))
+
+	match destination:
+		"forest":
+			_set_area("forest")
+			player.place_at(forest.get_node("ArrivalSpot").global_position, forest.get_node("ArrivalLook").global_position)
+			if Game.stage == Game.Stage.SET_SAIL:
+				Game.set_stage(Game.Stage.FOREST)
+		"haunted":
+			_arrive_on_haunted()
+		_:
+			_set_area("home")
+			player.place_at(HOME_DOCK_SPOT, Vector3(0, 0.1, 0))
+
 	await hud.fade_in(0.8)
-	hud.show_banner("The Whispering Woods" if going_to_forest else "Home Island", 2.0)
-	if going_to_forest and not _visited_forest:
+	var banner := "Home Island"
+	if destination == "forest":
+		banner = "The Whispering Woods"
+	elif destination == "haunted":
+		banner = "The Haunted Isle"
+	hud.show_banner(banner, 2.0)
+
+	if destination == "forest" and not _visited_forest:
 		_visited_forest = true
 		await _say("Captain Salty", [
 			"Land ho! Welcome to the Whispering Woods, matey!",
 			"Ranger Rowan runs the camp up ahead. Mind the cyclopses: their clubs hurt!|I'll wait here with the boat whenever ye want to sail home.",
 		])
+	elif destination == "haunted":
+		await _haunted_arrival_chatter()
+	Game.in_cutscene = false
+
+
+## Drop the corgi on the haunted dock, hand over the Ghost Sucker, and start
+## (or resume) the haunted adventure.
+func _arrive_on_haunted() -> void:
+	_set_area("haunted")
+	player.place_at(haunted.get_node("ArrivalSpot").global_position, haunted.get_node("ArrivalLook").global_position)
+	# Remember the weapon we had, then strap on the Ghost Sucker backpack.
+	_weapon_before_haunted = haunted.call("give_ghost_vacuum", player)
+	Game.start_haunted()
+
+
+## Put back whatever weapon the corgi was holding before the Ghost Sucker.
+## Best-effort: if we didn't record one, just leave things be.
+func _restore_weapon_after_haunted() -> void:
+	if _weapon_before_haunted != null:
+		player.call("give_weapon", _weapon_before_haunted)
+	_weapon_before_haunted = null
+
+
+## Salty's welcome speech the first time, a shorter line after that.
+func _haunted_arrival_chatter() -> void:
+	if not _visited_haunted:
+		_visited_haunted = true
+		await _say("Captain Salty", [
+			"Here we are, matey... the haunted isle. Brrr!",
+			"Here, take this Ghost Sucker backpack. Suck up those cute little ghosts!|When ye've caught enough, find the Requiem Bell in yon mansion.",
+			"I'll wait by the boat. Holler when ye want to sail home!",
+		])
+	elif Game.portal_gone:
+		await _say("Captain Salty", ["Peaceful now, eh? Ye did good, matey."])
+	else:
+		await _say("Captain Salty", ["Back for more spooks? Suck up those ghosts!"])
+
+
+## Too scared! Wipe only the haunted progress and plonk the corgi back at the
+## haunted dock. (Coins, gear and the main story are left completely alone.)
+func _on_haunted_reset() -> void:
+	# Ignore if we somehow aren't on the haunted island anymore.
+	if Game.area != "haunted":
+		return
+	Game.in_cutscene = true
+	await hud.fade_out(0.7)
+	# Clear out every ghost still floating around, then respawn the island.
+	for ghost in get_tree().get_nodes_in_group("ghosts"):
+		(ghost as Node).queue_free()
+	# Reset the haunted state (energy 0, caught 0, quest back to 1, meter empty).
+	Game.start_haunted()
+	player.place_at(haunted.get_node("ArrivalSpot").global_position, haunted.get_node("ArrivalLook").global_position)
+	await hud.fade_in(0.7)
+	hud.show_banner("You got spooked! Try again!", 2.0)
 	Game.in_cutscene = false
 
 

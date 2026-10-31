@@ -41,7 +41,15 @@ If you run out of hearts, you'll see **You died!** and then wake up back in your
 
 **The well cave and the first boss:** once you've finished Mom's quests and own all four pieces of armor (Leather Cap, Wooden Shield, Speedy Boots, Iron Helmet), the village well starts to glow purple and a rope appears. Climb down (press **E** at the well) into the **Well Cave**: fight the cave slimes, follow the glowing crystals through the tunnel, and find the **Slime Stone** on its pedestal. Taking it pulls you back up to the village... where the evil **Corgiwizard** has been waiting for someone to fetch it! He appears over the village well. The sky goes dark, everyone runs and hides, and he summons the **King Slime**! It hops after you and every third hop leaps high and slams down with a shockwave, so **jump** to dodge it. At half health it turns red, gets faster and calls in two helper slimes. Beat it to break the curse, bring the sun back, and unlock **Captain Salty's** boat at the north dock.
 
-**Island 2, the Whispering Woods:** talk to Captain Salty to sail to a thick forest island (and back home whenever you like). Ranger Rowan runs the camp by the dock, and **Juniper's Trading Post** sells tougher gear: Chainmail, Knight Shield, Forest Boots, Steel Helmet and Steel Sword. The woods are full of **mini cyclopses**: they raise their club high and SMASH (2 hearts!), so watch for the wind-up and dodge, or bonk them first to interrupt. Each one drops a **Cyclops Tooth** (sells for 10 coins) and **5 coins**. Follow the path north to the old stone shrine and take the **Golden Acorn**... and the Corgiwizard comes back, furious that you keep finding his hidden treasures! He summons the **Giant Cyclops**: stay out of the way of its club smash (hit it while it pulls the club back up), and **jump** its stomp shockwave. At half health it gets furious and calls in two mini cyclopses. (More islands coming soon!)
+**Island 2, the Whispering Woods:** talk to Captain Salty to sail to a thick forest island (and back home whenever you like). Ranger Rowan runs the camp by the dock, and **Juniper's Trading Post** sells tougher gear: Chainmail, Knight Shield, Forest Boots, Steel Helmet and Steel Sword. The woods are full of **mini cyclopses**: they raise their club high and SMASH (2 hearts!), so watch for the wind-up and dodge, or bonk them first to interrupt. Each one drops a **Cyclops Tooth** (sells for 10 coins) and **5 coins**. Follow the path north to the old stone shrine and take the **Golden Acorn**... and the Corgiwizard comes back, furious that you keep finding his hidden treasures! He summons the **Giant Cyclops**: stay out of the way of its club smash (hit it while it pulls the club back up), and **jump** its stomp shockwave. At half health it gets furious and calls in two mini cyclopses.
+
+**Optional: the Haunted Isle 👻** Once you've reached the Whispering Woods, Captain Salty (at either dock) offers a spooky side-trip: *"The seas be cursed, matey... but I can take ye to a haunted island!"* Say the word and he sails you to a foggy night-time island with a cute-spooky mansion. On arrival he straps a **Ghost Sucker** backpack onto your back. This adventure is completely optional and never touches your coins, gear or main story — it's its own little loop.
+
+- **Quest 1 — suck up the ghosts:** a glowing **portal** keeps pouring out cute little ghosts (up to a few at a time). Suck up **8** of them with the Ghost Sucker. Each ghost you catch gives you one **Ghost Energy**.
+- **Quest 2 — ring the Requiem Bell:** head up the path to the mansion and press **E** at the **Requiem Bell** on its stand. It needs **10 Ghost Energy** to ring. Too little and it just goes *clunk* and tells you how many more ghosts to catch. Enough, and it rings out, spends the energy, and **destroys the portal** — the ghosts drift away and the island goes calm for good.
+- **Watch the Scare meter!** Ghosts never cost you hearts, but every time one touches you it fills one pip of the **Scare meter** (5 pips, top-left). There's a short safe moment after each scare. Fill the whole meter and you get **Too scared!** — you drop everything and run back to the dock, and *only* the haunted progress resets (energy, ghosts caught and the quest go back to the start). Your coins, gear and the main story are untouched.
+
+Talk to Salty on the dock any time to sail home. (More islands coming soon!)
 
 ## What's in here
 
@@ -54,6 +62,9 @@ scenes/
   cave.tscn         The Well Cave (under the island) with the Slime Stone
   forest_island.tscn  Island 2: the Whispering Woods (camp, shop, shrine, cyclopses)
   forest_shop.tscn  Juniper's Trading Post
+  haunted_island.tscn  Optional island: the Haunted Isle (mansion, portal, bell, dock)
+  ghost_portal.tscn    The glowing portal the ghosts pour out of
+  placeholder_ghost.tscn  A stand-in ghost used until the real Ghost Sucker ghost is ready
   cyclops.tscn      A mini cyclops enemy
   boss_cyclops.tscn The second boss
   heart_pickup.tscn A heart that refills health
@@ -90,6 +101,7 @@ materials/          Toon-shaded colors + the cartoon outline
 - **Tune the boss:** open `scenes/king_slime_boss.tscn` and change Max Health, Hop Speed, Slam Every or Shockwave Radius.
 - **Change the shop:** open `scenes/shop_stall.tscn`, click Biscuit, and edit Stock and Prices.
 - **Make the quest harder:** open `scripts/game_state.gd` and change `jelly_goal := 5` or `wood_goal := 5` to bigger numbers.
+- **Tune the Haunted Isle:** open `scripts/game_state.gd` and change `ghosts_goal := 8` (ghosts for quest 1), `bell_energy_cost := 10` (energy to ring the bell), `scare_max := 5` (scare-meter pips) or `scare_grace := 2.0` (safe seconds after a scare). The portal's spawn rate and cap live on the GhostPortal node in `scenes/ghost_portal.tscn`.
 
 ## Equipment
 
