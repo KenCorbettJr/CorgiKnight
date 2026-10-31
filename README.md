@@ -28,6 +28,7 @@ There are two camera styles. Press **C** to switch:
 | Jump | Space | A |
 | Run | Shift | Left bumper |
 | Swing sword / axe | Left click / J | X |
+| Suck up ghosts (Ghost Sucker) | **Hold** left click / J | **Hold** X |
 | Switch weapon | Q | Right bumper |
 | Talk | E | Y |
 | Inventory (pauses the game; click gear to wear it) | I | Back / View / Select |
@@ -45,7 +46,7 @@ If you run out of hearts, you'll see **You died!** and then wake up back in your
 
 **Optional: the Haunted Isle 👻** Once you've reached the Whispering Woods, Captain Salty (at either dock) offers a spooky side-trip: *"The seas be cursed, matey... but I can take ye to a haunted island!"* Say the word and he sails you to a foggy night-time island with a cute-spooky mansion. On arrival he straps a **Ghost Sucker** backpack onto your back. This adventure is completely optional and never touches your coins, gear or main story — it's its own little loop.
 
-- **Quest 1 — suck up the ghosts:** a glowing **portal** keeps pouring out cute little ghosts (up to a few at a time). Suck up **8** of them with the Ghost Sucker. Each ghost you catch gives you one **Ghost Energy**.
+- **Quest 1 — suck up the ghosts:** a glowing **portal** keeps pouring out cute little ghosts (up to a few at a time). **Hold** the attack button (left click / J, or X on a controller) to fire the Ghost Sucker's beam and reel a ghost in — keep it in the beam for a moment and *shloop*, it's caught. Suck up **8** of them. Each ghost you catch gives you one **Ghost Energy**. (Your sword swings right through ghosts — only the Ghost Sucker can catch them.)
 - **Quest 2 — ring the Requiem Bell:** head up the path to the mansion and press **E** at the **Requiem Bell** on its stand. It needs **10 Ghost Energy** to ring. Too little and it just goes *clunk* and tells you how many more ghosts to catch. Enough, and it rings out, spends the energy, and **destroys the portal** — the ghosts drift away and the island goes calm for good.
 - **Watch the Scare meter!** Ghosts never cost you hearts, but every time one touches you it fills one pip of the **Scare meter** (5 pips, top-left). There's a short safe moment after each scare. Fill the whole meter and you get **Too scared!** — you drop everything and run back to the dock, and *only* the haunted progress resets (energy, ghosts caught and the quest go back to the start). Your coins, gear and the main story are untouched.
 
@@ -64,7 +65,8 @@ scenes/
   forest_shop.tscn  Juniper's Trading Post
   haunted_island.tscn  Optional island: the Haunted Isle (mansion, portal, bell, dock)
   ghost_portal.tscn    The glowing portal the ghosts pour out of
-  placeholder_ghost.tscn  A stand-in ghost used until the real Ghost Sucker ghost is ready
+  ghost.tscn           A cute little ghost (floats, scares you, gets slurped up)
+  test/ghost_test.tscn A sandbox to try the ghosts + Ghost Sucker by hand
   cyclops.tscn      A mini cyclops enemy
   boss_cyclops.tscn The second boss
   heart_pickup.tscn A heart that refills health
@@ -75,7 +77,7 @@ scenes/
   jelly_pickup.tscn Slime Jelly that slimes drop
   wood_pickup.tscn  Wood that chopped trees drop
   player.tscn       The corgi knight (made from simple shapes for now) + camera
-  equipment/        Things the corgi can hold or wear (Wooden Sword, Axe, Red Cape, plus a spare sword)
+  equipment/        Things the corgi can hold or wear (Wooden Sword, Axe, Red Cape, the Ghost Sucker backpack, and more)
   slime.tscn        A slime enemy
   tree.tscn         A puffy cartoon tree (chop it with the axe!)
   rock.tscn         A rock

@@ -9,7 +9,7 @@ extends Node3D
 
 const DEAD_TREE_SCENE := preload("res://scenes/tree.tscn")
 const ROCK_SCENE := preload("res://scenes/rock.tscn")
-## Worker B builds this on another branch; we guard its use with ResourceLoader.
+## The Ghost Sucker backpack handed over on arrival (guarded with ResourceLoader).
 const GHOST_VACUUM_PATH := "res://scenes/equipment/ghost_vacuum.tscn"
 
 @export var tree_count := 55
@@ -53,9 +53,8 @@ func give_ghost_vacuum(player: Node) -> PackedScene:
 	if ResourceLoader.exists(GHOST_VACUUM_PATH):
 		player.call("give_weapon", load(GHOST_VACUUM_PATH))
 	else:
-		# Worker B's backpack isn't on this branch — warn and carry on so the
-		# island is still playable (the placeholder ghost can be "slurped"
-		# with whatever weapon you're holding, or by pressing E).
+		# Shouldn't happen (the Ghost Sucker ships with the game) — warn and
+		# carry on with the corgi's current weapon so the island is still playable.
 		push_warning("Ghost Sucker not found at %s — using your current weapon." % GHOST_VACUUM_PATH)
 	return previous
 

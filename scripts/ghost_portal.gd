@@ -2,13 +2,8 @@ extends Node3D
 ## The glowing portal the ghosts pour out of. It keeps spawning cute ghosts
 ## (up to a cap) so there's always energy to earn — until the Requiem Bell is
 ## rung and the portal is destroyed.
-##
-## Worker B owns the real ghost at res://scenes/ghost.tscn. We prefer that
-## whenever it exists; otherwise we fall back to our own placeholder so the
-## island still works (and tests still run) on this branch.
 
-const REAL_GHOST_PATH := "res://scenes/ghost.tscn"
-const PLACEHOLDER_GHOST_PATH := "res://scenes/placeholder_ghost.tscn"
+const GHOST_PATH := "res://scenes/ghost.tscn"
 
 ## Most ghosts allowed alive at once (so the island never gets swamped).
 @export var max_ghosts := 6
@@ -29,13 +24,10 @@ var _rng := RandomNumberGenerator.new()
 
 func _ready() -> void:
 	_rng.randomize()
-	# Prefer worker B's real ghost; fall back to our placeholder.
-	if ResourceLoader.exists(REAL_GHOST_PATH):
-		_ghost_scene = load(REAL_GHOST_PATH)
-	elif ResourceLoader.exists(PLACEHOLDER_GHOST_PATH):
-		_ghost_scene = load(PLACEHOLDER_GHOST_PATH)
+	if ResourceLoader.exists(GHOST_PATH):
+		_ghost_scene = load(GHOST_PATH)
 	else:
-		push_warning("GhostPortal: no ghost scene found (expected %s)." % REAL_GHOST_PATH)
+		push_warning("GhostPortal: no ghost scene found (expected %s)." % GHOST_PATH)
 	# If the portal was already beaten this run, start out quiet and dim.
 	if Game.portal_gone:
 		_go_quiet(true)
