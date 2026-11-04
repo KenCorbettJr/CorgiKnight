@@ -1,0 +1,21 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/equipment_item.gd" id="1_item"]
+[ext_resource type="Material" path="res://materials/leather_cap.tres" id="2_leather"]
+
+[sub_resource type="SphereMesh" id="Mesh_cap"]
+radius = 0.32
+height = 0.32
+is_hemisphere = true
+
+[node name="LeatherCap" type="Node3D"]
+script = ExtResource("1_item")
+slot = "head"
+bonus_hearts = 1
+display_name = "Leather Cap"
+
+[node name="Cap" type="MeshInstance3D" parent="."]
+position = Vector3(0, -0.02, 0)
+scale = Vector3(1, 0.95, 1)
+mesh = SubResource("Mesh_cap")
+material_override = ExtResource("2_leather")

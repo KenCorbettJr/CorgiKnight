@@ -1,0 +1,17 @@
+[gd_resource type="StandardMaterial3D" load_steps=2 format=3]
+
+; The cute ghost's body: a soft, pale blue-white that you can see a
+; little bit through (just like a friendly Boo!). It keeps the same toon
+; outline every other character in the game uses so it fits right in.
+
+[ext_resource type="Material" path="res://materials/outline.tres" id="1_outline"]
+
+[resource]
+next_pass = ExtResource("1_outline")
+transparency = 1
+albedo_color = Color(0.88, 0.94, 1.0, 0.72)
+diffuse_mode = 3
+specular_mode = 1
+rim_enabled = true
+rim = 0.5
+rim_tint = 0.4

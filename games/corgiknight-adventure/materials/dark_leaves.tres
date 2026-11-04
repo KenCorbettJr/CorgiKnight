@@ -1,0 +1,10 @@
+[gd_resource type="StandardMaterial3D" load_steps=2 format=3]
+
+[ext_resource type="Material" path="res://materials/outline.tres" id="1_outline"]
+
+[resource]
+next_pass = ExtResource("1_outline")
+albedo_color = Color(0.18, 0.48, 0.28, 1)
+diffuse_mode = 3
+specular_mode = 1
+roughness = 1.0

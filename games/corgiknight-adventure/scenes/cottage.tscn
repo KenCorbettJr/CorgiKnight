@@ -1,0 +1,104 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/cottage.gd" id="0_script"]
+
+[ext_resource type="PackedScene" path="res://scenes/stone_block.tscn" id="1_block"]
+
+[ext_resource type="Material" path="res://materials/wood.tres" id="m_wood"]
+
+[ext_resource type="Material" path="res://materials/wood_dark.tres" id="m_wood_dark"]
+
+[ext_resource type="Material" path="res://materials/roof.tres" id="m_roof"]
+
+[ext_resource type="Material" path="res://materials/rug.tres" id="m_rug"]
+
+[sub_resource type="PrismMesh" id="Mesh_gable"]
+size = Vector3(6.4, 1.4, 0.3)
+
+[sub_resource type="CylinderMesh" id="Mesh_rug"]
+top_radius = 1.3
+bottom_radius = 1.3
+height = 0.02
+radial_segments = 32
+
+[node name="Cottage" type="Node3D" groups=["keep_clear", "building"]]
+script = ExtResource("0_script")
+
+[node name="Floor" parent="." instance=ExtResource("1_block")]
+position = Vector3(0, -0.05, 0)
+size = Vector3(7.4, 0.1, 6.4)
+material = ExtResource("m_wood_dark")
+
+[node name="WallBack" parent="." instance=ExtResource("1_block")]
+position = Vector3(0, 0, -3.05)
+size = Vector3(7.4, 2.6, 0.3)
+material = ExtResource("m_wood")
+
+[node name="WallLeft" parent="." instance=ExtResource("1_block")]
+position = Vector3(-3.55, 0, 0)
+size = Vector3(0.3, 2.6, 6.4)
+material = ExtResource("m_wood")
+
+[node name="WallRight" parent="." instance=ExtResource("1_block")]
+position = Vector3(3.55, 0, 0)
+size = Vector3(0.3, 2.6, 6.4)
+material = ExtResource("m_wood")
+
+[node name="WallFrontL" parent="." instance=ExtResource("1_block")]
+position = Vector3(-2.25, 0, 3.05)
+size = Vector3(2.9, 2.6, 0.3)
+material = ExtResource("m_wood")
+
+[node name="WallFrontR" parent="." instance=ExtResource("1_block")]
+position = Vector3(2.25, 0, 3.05)
+size = Vector3(2.9, 2.6, 0.3)
+material = ExtResource("m_wood")
+
+[node name="DoorTop" parent="." instance=ExtResource("1_block")]
+position = Vector3(0, 2.0, 3.05)
+size = Vector3(1.6, 0.6, 0.3)
+material = ExtResource("m_wood")
+
+[node name="RoofBack" parent="." instance=ExtResource("1_block")]
+position = Vector3(0, 3.2, -1.8)
+rotation = Vector3(-0.418, 0, 0)
+size = Vector3(8.2, 0.2, 4.1)
+material = ExtResource("m_roof")
+
+[node name="RoofFront" parent="." instance=ExtResource("1_block")]
+position = Vector3(0, 3.2, 1.8)
+rotation = Vector3(0.418, 0, 0)
+size = Vector3(8.2, 0.2, 4.1)
+material = ExtResource("m_roof")
+
+[node name="Chimney" parent="." instance=ExtResource("1_block")]
+position = Vector3(2.2, 3.45, -1.6)
+size = Vector3(0.6, 1.4, 0.6)
+
+[node name="Table" parent="." instance=ExtResource("1_block")]
+position = Vector3(2.3, 0.05, -2.45)
+size = Vector3(1.2, 0.7, 0.8)
+material = ExtResource("m_wood")
+
+[node name="GableLeft" type="MeshInstance3D" parent="."]
+position = Vector3(-3.55, 3.3, 0)
+rotation = Vector3(0, 1.5708, 0)
+mesh = SubResource("Mesh_gable")
+material_override = ExtResource("m_wood")
+
+[node name="GableRight" type="MeshInstance3D" parent="."]
+position = Vector3(3.55, 3.3, 0)
+rotation = Vector3(0, 1.5708, 0)
+mesh = SubResource("Mesh_gable")
+material_override = ExtResource("m_wood")
+
+[node name="Rug" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.06, 0.4)
+mesh = SubResource("Mesh_rug")
+material_override = ExtResource("m_rug")
+
+[node name="Lamp" type="OmniLight3D" parent="."]
+position = Vector3(0, 2.2, 0)
+light_color = Color(1, 0.86, 0.62, 1)
+light_energy = 1.6
+omni_range = 7.0

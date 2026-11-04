@@ -1,0 +1,55 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://scripts/mom.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://scenes/characters/corgi_model.tscn" id="2_model"]
+[ext_resource type="Material" path="res://materials/pink.tres" id="3_pink"]
+[ext_resource type="Material" path="res://materials/apron.tres" id="4_apron"]
+
+[sub_resource type="CapsuleShape3D" id="Shape_mom"]
+radius = 0.35
+height = 1.2
+
+[sub_resource type="BoxMesh" id="Mesh_apron"]
+size = Vector3(0.36, 0.38, 0.05)
+
+[sub_resource type="SphereMesh" id="Mesh_bow"]
+radius = 0.07
+height = 0.14
+
+[node name="Mom" type="StaticBody3D"]
+collision_layer = 1
+collision_mask = 0
+script = ExtResource("1_script")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+position = Vector3(0, 0.6, 0)
+shape = SubResource("Shape_mom")
+
+[node name="Model" parent="." instance=ExtResource("2_model")]
+scale = Vector3(1.12, 1.12, 1.12)
+
+[node name="Apron" type="MeshInstance3D" parent="Model/Hips/ChestSocket"]
+position = Vector3(0, -0.12, -0.23)
+rotation = Vector3(-0.12, 0, 0)
+mesh = SubResource("Mesh_apron")
+material_override = ExtResource("4_apron")
+
+[node name="BowLoopL" type="MeshInstance3D" parent="Model/Hips/Head/HeadSocket"]
+position = Vector3(-0.2, 0.1, -0.1)
+scale = Vector3(1.3, 1, 0.6)
+mesh = SubResource("Mesh_bow")
+material_override = ExtResource("3_pink")
+
+[node name="BowLoopR" type="MeshInstance3D" parent="Model/Hips/Head/HeadSocket"]
+position = Vector3(-0.04, 0.12, -0.1)
+scale = Vector3(1.3, 1, 0.6)
+mesh = SubResource("Mesh_bow")
+material_override = ExtResource("3_pink")
+
+[node name="BowKnot" type="MeshInstance3D" parent="Model/Hips/Head/HeadSocket"]
+position = Vector3(-0.12, 0.11, -0.12)
+scale = Vector3(0.6, 0.6, 0.6)
+mesh = SubResource("Mesh_bow")
+material_override = ExtResource("3_pink")
+
+[editable path="Model"]

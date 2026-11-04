@@ -1,0 +1,244 @@
+[gd_scene load_steps=28 format=3]
+
+[ext_resource type="Script" path="res://scripts/haunted_island.gd" id="0_script"]
+[ext_resource type="PackedScene" path="res://scenes/stone_block.tscn" id="1_block"]
+[ext_resource type="PackedScene" path="res://scenes/dock.tscn" id="2_dock"]
+[ext_resource type="PackedScene" path="res://scenes/ghost_portal.tscn" id="3_portal"]
+[ext_resource type="Script" path="res://scripts/requiem_bell.gd" id="4_bell"]
+[ext_resource type="Material" path="res://materials/forest_grass.tres" id="m_grass"]
+[ext_resource type="Material" path="res://materials/sand.tres" id="m_sand"]
+[ext_resource type="Material" path="res://materials/water.tres" id="m_water"]
+[ext_resource type="Material" path="res://materials/wall_cream.tres" id="m_wall"]
+[ext_resource type="Material" path="res://materials/roof.tres" id="m_roof"]
+[ext_resource type="Material" path="res://materials/wood_dark.tres" id="m_dark"]
+[ext_resource type="Material" path="res://materials/stone.tres" id="m_stone"]
+[ext_resource type="Material" path="res://materials/gold.tres" id="m_gold"]
+[ext_resource type="Material" path="res://materials/crystal_cyan.tres" id="m_window"]
+
+[sub_resource type="CylinderShape3D" id="Shape_grass"]
+radius = 33.0
+height = 2.0
+
+[sub_resource type="CylinderMesh" id="Mesh_grass"]
+top_radius = 33.0
+bottom_radius = 33.5
+height = 2.0
+radial_segments = 96
+
+[sub_resource type="CylinderShape3D" id="Shape_sand"]
+radius = 35.0
+height = 2.0
+
+[sub_resource type="CylinderMesh" id="Mesh_sand"]
+top_radius = 35.0
+bottom_radius = 36.0
+height = 2.0
+radial_segments = 96
+
+[sub_resource type="PlaneMesh" id="Mesh_water"]
+size = Vector2(320, 320)
+
+[sub_resource type="BoxMesh" id="Mesh_path"]
+size = Vector3(3.0, 0.08, 1.6)
+
+[sub_resource type="PrismMesh" id="Mesh_roof"]
+size = Vector3(11.0, 3.2, 9.0)
+
+[sub_resource type="BoxMesh" id="Mesh_door"]
+size = Vector3(1.4, 2.4, 0.2)
+
+[sub_resource type="BoxMesh" id="Mesh_window"]
+size = Vector3(1.2, 1.4, 0.2)
+
+[sub_resource type="CylinderMesh" id="Mesh_bellframe"]
+top_radius = 0.12
+bottom_radius = 0.12
+height = 2.2
+radial_segments = 8
+
+[sub_resource type="BoxMesh" id="Mesh_bellbeam"]
+size = Vector3(2.4, 0.2, 0.2)
+
+[sub_resource type="CylinderMesh" id="Mesh_bell"]
+top_radius = 0.18
+bottom_radius = 0.55
+height = 0.85
+radial_segments = 16
+
+[node name="HauntedIsland" type="Node3D"]
+script = ExtResource("0_script")
+
+[node name="Ground" type="StaticBody3D" parent="."]
+collision_layer = 1
+collision_mask = 0
+
+[node name="GrassShape" type="CollisionShape3D" parent="Ground"]
+position = Vector3(0, -1, 0)
+shape = SubResource("Shape_grass")
+
+[node name="Grass" type="MeshInstance3D" parent="Ground"]
+position = Vector3(0, -1, 0)
+mesh = SubResource("Mesh_grass")
+material_override = ExtResource("m_grass")
+
+[node name="SandShape" type="CollisionShape3D" parent="Ground"]
+position = Vector3(0, -1.3, 0)
+shape = SubResource("Shape_sand")
+
+[node name="Sand" type="MeshInstance3D" parent="Ground"]
+position = Vector3(0, -1.3, 0)
+mesh = SubResource("Mesh_sand")
+material_override = ExtResource("m_sand")
+
+[node name="Water" type="MeshInstance3D" parent="."]
+position = Vector3(0, -0.55, 0)
+mesh = SubResource("Mesh_water")
+material_override = ExtResource("m_water")
+
+[node name="Scenery" type="Node3D" parent="."]
+
+[node name="Dock" parent="." instance=ExtResource("2_dock")]
+position = Vector3(0, 0, 31)
+rotation = Vector3(0, 3.14159, 0)
+
+[node name="ArrivalSpot" type="Marker3D" parent="."]
+position = Vector3(0, 0.1, 28)
+
+[node name="ArrivalLook" type="Marker3D" parent="."]
+position = Vector3(0, 0.1, 18)
+
+[node name="HauntedBed" type="Marker3D" parent="."]
+position = Vector3(0, 0.1, 28)
+
+[node name="IslandSign" type="Label3D" parent="."]
+position = Vector3(2.8, 2.2, 27.5)
+billboard = 1
+modulate = Color(0.75, 0.9, 0.8, 1)
+outline_modulate = Color(0.1, 0.15, 0.2, 1)
+text = "Haunted Isle"
+font_size = 80
+outline_size = 16
+
+[node name="Path1" type="MeshInstance3D" parent="."]
+position = Vector3(0, -0.46, 22)
+mesh = SubResource("Mesh_path")
+material_override = ExtResource("m_dark")
+
+[node name="Path2" type="MeshInstance3D" parent="."]
+position = Vector3(0, -0.46, 16)
+mesh = SubResource("Mesh_path")
+material_override = ExtResource("m_dark")
+
+[node name="Path3" type="MeshInstance3D" parent="."]
+position = Vector3(0, -0.46, 10)
+mesh = SubResource("Mesh_path")
+material_override = ExtResource("m_dark")
+
+[node name="Path4" type="MeshInstance3D" parent="."]
+position = Vector3(0, -0.46, 4)
+mesh = SubResource("Mesh_path")
+material_override = ExtResource("m_dark")
+
+[node name="Path5" type="MeshInstance3D" parent="."]
+position = Vector3(0, -0.46, -2)
+mesh = SubResource("Mesh_path")
+material_override = ExtResource("m_dark")
+
+[node name="GhostPortal" parent="." instance=ExtResource("3_portal")]
+position = Vector3(11, 0, -2)
+
+[node name="Mansion" type="Node3D" parent="."]
+position = Vector3(0, 0, -22)
+
+[node name="WallFront" parent="Mansion" instance=ExtResource("1_block")]
+position = Vector3(0, 2.0, 4.0)
+size = Vector3(10.0, 4.0, 0.4)
+material = ExtResource("m_wall")
+
+[node name="WallBack" parent="Mansion" instance=ExtResource("1_block")]
+position = Vector3(0, 2.0, -4.0)
+size = Vector3(10.0, 4.0, 0.4)
+material = ExtResource("m_wall")
+
+[node name="WallLeft" parent="Mansion" instance=ExtResource("1_block")]
+position = Vector3(-5.0, 2.0, 0)
+size = Vector3(0.4, 4.0, 8.0)
+material = ExtResource("m_wall")
+
+[node name="WallRight" parent="Mansion" instance=ExtResource("1_block")]
+position = Vector3(5.0, 2.0, 0)
+size = Vector3(0.4, 4.0, 8.0)
+material = ExtResource("m_wall")
+
+[node name="Roof" type="MeshInstance3D" parent="Mansion"]
+position = Vector3(0, 5.6, 0)
+mesh = SubResource("Mesh_roof")
+material_override = ExtResource("m_roof")
+
+[node name="Tower" parent="Mansion" instance=ExtResource("1_block")]
+position = Vector3(-3.6, 3.4, 2.6)
+size = Vector3(2.2, 7.0, 2.2)
+material = ExtResource("m_wall")
+
+[node name="TowerRoof" type="MeshInstance3D" parent="Mansion"]
+position = Vector3(-3.6, 7.6, 2.6)
+rotation = Vector3(0, 0.7854, 0)
+scale = Vector3(0.32, 0.9, 0.32)
+mesh = SubResource("Mesh_roof")
+material_override = ExtResource("m_roof")
+
+[node name="Door" type="MeshInstance3D" parent="Mansion"]
+position = Vector3(0, 1.2, 4.2)
+mesh = SubResource("Mesh_door")
+material_override = ExtResource("m_dark")
+
+[node name="WindowL" type="MeshInstance3D" parent="Mansion"]
+position = Vector3(-2.6, 2.4, 4.21)
+mesh = SubResource("Mesh_window")
+material_override = ExtResource("m_window")
+
+[node name="WindowR" type="MeshInstance3D" parent="Mansion"]
+position = Vector3(2.6, 2.4, 4.21)
+mesh = SubResource("Mesh_window")
+material_override = ExtResource("m_window")
+
+[node name="PorchLight" type="OmniLight3D" parent="Mansion"]
+position = Vector3(0, 3.2, 5.0)
+light_color = Color(0.7, 0.9, 0.6, 1)
+light_energy = 1.6
+omni_range = 8.0
+
+[node name="BellStand" type="Node3D" parent="Mansion"]
+position = Vector3(0, 0, 6.5)
+
+[node name="PostL" type="MeshInstance3D" parent="Mansion/BellStand"]
+position = Vector3(-1.1, 1.1, 0)
+mesh = SubResource("Mesh_bellframe")
+material_override = ExtResource("m_dark")
+
+[node name="PostR" type="MeshInstance3D" parent="Mansion/BellStand"]
+position = Vector3(1.1, 1.1, 0)
+mesh = SubResource("Mesh_bellframe")
+material_override = ExtResource("m_dark")
+
+[node name="Beam" type="MeshInstance3D" parent="Mansion/BellStand"]
+position = Vector3(0, 2.15, 0)
+mesh = SubResource("Mesh_bellbeam")
+material_override = ExtResource("m_dark")
+
+[node name="RequiemBell" type="Node3D" parent="Mansion/BellStand"]
+position = Vector3(0, 2.05, 0)
+script = ExtResource("4_bell")
+
+[node name="Pivot" type="Node3D" parent="Mansion/BellStand/RequiemBell"]
+
+[node name="BellBody" type="MeshInstance3D" parent="Mansion/BellStand/RequiemBell/Pivot"]
+position = Vector3(0, -0.55, 0)
+mesh = SubResource("Mesh_bell")
+material_override = ExtResource("m_gold")
+
+[node name="BellGlow" type="OmniLight3D" parent="Mansion/BellStand/RequiemBell"]
+position = Vector3(0, -0.4, 0)
+light_color = Color(1, 0.9, 0.5, 1)
+light_energy = 1.4
+omni_range = 5.0

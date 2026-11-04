@@ -1,0 +1,44 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/heart_pickup.gd" id="1_script"]
+[ext_resource type="Material" path="res://materials/heart_red.tres" id="2_red"]
+
+[sub_resource type="SphereMesh" id="Mesh_lobe"]
+radius = 0.13
+height = 0.26
+
+[sub_resource type="CylinderMesh" id="Mesh_point"]
+top_radius = 0.19
+bottom_radius = 0.0
+height = 0.26
+radial_segments = 16
+
+[node name="HeartPickup" type="Node3D"]
+script = ExtResource("1_script")
+kind = "heart"
+pickup_range = 1.2
+
+[node name="Visual" type="Node3D" parent="."]
+
+[node name="LobeL" type="MeshInstance3D" parent="Visual"]
+position = Vector3(-0.09, 0.1, 0)
+scale = Vector3(1, 1, 0.6)
+mesh = SubResource("Mesh_lobe")
+material_override = ExtResource("2_red")
+
+[node name="LobeR" type="MeshInstance3D" parent="Visual"]
+position = Vector3(0.09, 0.1, 0)
+scale = Vector3(1, 1, 0.6)
+mesh = SubResource("Mesh_lobe")
+material_override = ExtResource("2_red")
+
+[node name="Point" type="MeshInstance3D" parent="Visual"]
+position = Vector3(0, -0.04, 0)
+scale = Vector3(1, 1, 0.55)
+mesh = SubResource("Mesh_point")
+material_override = ExtResource("2_red")
+
+[node name="Glow" type="OmniLight3D" parent="."]
+light_color = Color(1, 0.4, 0.5, 1)
+light_energy = 0.8
+omni_range = 1.8

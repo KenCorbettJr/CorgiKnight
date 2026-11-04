@@ -1,0 +1,30 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/pickup.gd" id="1_script"]
+[ext_resource type="Material" path="res://materials/corgi_white.tres" id="2_white"]
+
+[sub_resource type="CylinderMesh" id="Mesh_tooth"]
+top_radius = 0.0
+bottom_radius = 0.1
+height = 0.3
+radial_segments = 10
+
+[sub_resource type="SphereMesh" id="Mesh_root"]
+radius = 0.1
+height = 0.12
+
+[node name="ToothPickup" type="Node3D"]
+script = ExtResource("1_script")
+kind = "tooth"
+
+[node name="Visual" type="Node3D" parent="."]
+
+[node name="Tooth" type="MeshInstance3D" parent="Visual"]
+position = Vector3(0, 0.05, 0)
+mesh = SubResource("Mesh_tooth")
+material_override = ExtResource("2_white")
+
+[node name="Root" type="MeshInstance3D" parent="Visual"]
+position = Vector3(0, -0.1, 0)
+mesh = SubResource("Mesh_root")
+material_override = ExtResource("2_white")
