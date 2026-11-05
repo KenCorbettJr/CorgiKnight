@@ -1,0 +1,77 @@
+name: corgiknight-adventure CI
+
+# Headless boot + test gate for the standalone island-adventure game.
+# Proves games/corgiknight-adventure is intact and self-contained after the
+# monorepo split: it imports clean, both main scenes boot, and the headless
+# test suite passes under the same Godot version used locally.
+
+on:
+  pull_request:
+    paths:
+      - "games/corgiknight-adventure/**"
+      - ".github/workflows/adventure-ci.yml"
+  push:
+    branches:
+      - monorepo-scaffold
+      - main
+    paths:
+      - "games/corgiknight-adventure/**"
+      - ".github/workflows/adventure-ci.yml"
+  workflow_dispatch:
+
+jobs:
+  boot-and-test:
+    name: Boot + headless tests
+    runs-on: ubuntu-latest
+    env:
+      GODOT_VERSION: "4.7.2"
+      PROJECT: games/corgiknight-adventure
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download Godot ${{ env.GODOT_VERSION }} (headless Linux)
+        run: |
+          set -euo pipefail
+          url="https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
+          echo "Fetching $url"
+          curl -fsSL -o godot.zip "$url"
+          unzip -o -q godot.zip
+          mv "Godot_v${GODOT_VERSION}-stable_linux.x86_64" godot
+          chmod +x godot
+          ./godot --version
+
+      - name: Import project (editor pass)
+        run: |
+          set -euo pipefail
+          ./godot --headless --path "$PROJECT" --import --quit
+          echo "import exit=$?"
+
+      - name: Boot check — editor import, exit clean
+        run: |
+          set -euo pipefail
+          ./godot --headless --path "$PROJECT" --quit
+
+      - name: Boot check — title scene (configured main scene)
+        run: |
+          set -euo pipefail
+          ./godot --headless --path "$PROJECT" res://scenes/title.tscn --quit-after 90
+
+      - name: Boot check — main gameplay scene
+        run: |
+          set -euo pipefail
+          ./godot --headless --path "$PROJECT" res://scenes/main.tscn --quit-after 120
+
+      - name: Headless test — boot smoke (every scene loads)
+        run: |
+          set -euo pipefail
+          out=$(./godot --headless --path "$PROJECT" res://scenes/test/boot_smoke_test.tscn 2>&1)
+          echo "$out"
+          echo "$out" | grep -q "0 failures" || { echo "::error::boot smoke test reported failures"; exit 1; }
+
+      - name: Headless test — haunted island integration
+        run: |
+          set -euo pipefail
+          out=$(./godot --headless --path "$PROJECT" res://scenes/test/haunted_integration_test.tscn 2>&1)
+          echo "$out"
+          echo "$out" | grep -q "0 failures" || { echo "::error::haunted integration test reported failures"; exit 1; }
