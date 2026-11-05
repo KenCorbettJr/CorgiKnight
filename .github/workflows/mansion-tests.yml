@@ -1,0 +1,133 @@
+name: Mansion headless tests
+
+# Runs the standalone Haunted Mansion roguelike's headless Godot test scenes.
+# Scoped to games/corgiknight-mansion only — does NOT touch or depend on
+# games/corgiknight-adventure. A green run means every test scene reported
+# zero failures.
+
+on:
+  pull_request:
+  push:
+
+# Official Godot 4.7 stable linux headless/standard build. The project pins
+# 4.7 / Forward Plus (games/corgiknight-mansion/project.godot config/features).
+env:
+  GODOT_VERSION: "4.7-stable"
+  GODOT_ZIP: "Godot_v4.7-stable_linux.x86_64.zip"
+  GODOT_BIN: "Godot_v4.7-stable_linux.x86_64"
+  PROJECT_PATH: "games/corgiknight-mansion"
+
+jobs:
+  mansion-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Godot ${{ env.GODOT_VERSION }} (headless)
+        run: |
+          set -euo pipefail
+          url="https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}/${GODOT_ZIP}"
+          echo "Downloading $url"
+          curl -fL --retry 3 -o godot.zip "$url"
+          unzip -o -q godot.zip
+          mkdir -p "$HOME/.local/bin"
+          mv "$GODOT_BIN" "$HOME/.local/bin/godot"
+          chmod +x "$HOME/.local/bin/godot"
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      - name: Verify Godot version is 4.7
+        run: |
+          set -euo pipefail
+          ver="$(godot --headless --version || true)"
+          echo "Godot reports: $ver"
+          case "$ver" in
+            4.7*) echo "Version OK (4.7.x)";;
+            *) echo "::error::Expected Godot 4.7.x but got '$ver'"; exit 1;;
+          esac
+
+      - name: Import project (build .godot cache)
+        run: |
+          set -euo pipefail
+          # First headless import pass so the .godot script/resource cache is
+          # built; a cold cache cascades class_name load-order parse errors.
+          # Run twice: the first pass warms the cache, the second resolves any
+          # class_name ordering so scripts load clean. Import can exit non-zero
+          # on a cold project, so don't gate on its exit code here.
+          godot --headless --path "$PROJECT_PATH" --import || true
+          godot --headless --path "$PROJECT_PATH" --import || true
+
+      - name: Run mansion headless test scenes
+        run: |
+          set -uo pipefail
+          # Self-quitting test scenes that print PASS:/FAIL: and a final
+          # "=== N checks, M failures ===" line. ghost_test.tscn is an
+          # interactive harness that never quits, so it is intentionally
+          # EXCLUDED here.
+          scenes=(
+            "res://scenes/test/roguelike_loop_test.tscn"
+            "res://scenes/test/run_state_test.tscn"
+            "res://scenes/test/haunted_integration_test.tscn"
+          )
+
+          overall=0
+          mkdir -p test-logs
+          for scene in "${scenes[@]}"; do
+            # Skip gracefully if a scene isn't present in this tree.
+            rel="${scene#res://}"
+            if [ ! -f "$PROJECT_PATH/$rel" ]; then
+              echo "::notice::Skipping missing scene $scene"
+              continue
+            fi
+
+            log="test-logs/$(basename "$rel" .tscn).log"
+            echo "===================================================="
+            echo "Running $scene"
+            echo "===================================================="
+            # 120s guard so a hung scene can't wedge the job forever.
+            timeout 120 godot --headless --path "$PROJECT_PATH" "$scene" 2>&1 | tee "$log"
+            godot_rc="${PIPESTATUS[0]}"
+
+            # GATE: the Godot exit code can be 0 even when tests fail, so gate
+            # on the printed results instead. Fail if any FAIL: line appears,
+            # if a "failures ===" count is > 0, or if no summary was printed.
+            if grep -q "^FAIL:" "$log"; then
+              echo "::error::$scene printed FAIL: lines"
+              overall=1
+            fi
+
+            summary="$(grep -E '=== [0-9]+ checks, [0-9]+ failures ===' "$log" | tail -1 || true)"
+            if [ -z "$summary" ]; then
+              echo "::error::$scene did not print a '=== N checks, M failures ===' summary (crashed, hung, or timed out). godot rc=$godot_rc"
+              overall=1
+            else
+              fails="$(echo "$summary" | sed -E 's/.*checks, ([0-9]+) failures.*/\1/')"
+              echo "$scene summary: $summary"
+              if [ "$fails" -ne 0 ]; then
+                echo "::error::$scene reported $fails failures"
+                overall=1
+              fi
+            fi
+
+            # A nonzero timeout/crash rc with no clean summary is also a failure
+            # (124 == timeout).
+            if [ "$godot_rc" -eq 124 ]; then
+              echo "::error::$scene timed out (rc 124)"
+              overall=1
+            fi
+          done
+
+          echo "===================================================="
+          if [ "$overall" -ne 0 ]; then
+            echo "::error::One or more mansion test scenes failed"
+            exit 1
+          fi
+          echo "All mansion test scenes reported zero failures."
+
+      - name: Upload test logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mansion-test-logs
+          path: test-logs/
+          if-no-files-found: ignore

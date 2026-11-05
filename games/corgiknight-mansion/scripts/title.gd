@@ -4,7 +4,9 @@ extends Node3D
 
 const SWORD := preload("res://scenes/equipment/basic_sword.tscn")
 const CAPE := preload("res://scenes/equipment/red_cape.tscn")
-const GAME_SCENE := "res://scenes/main.tscn"
+## The standalone roguelike goes straight from the title into a freshly
+## generated Level 1 mansion — no island, no intro, no quest gate.
+const GAME_SCENE := "res://scenes/mansion.tscn"
 
 @onready var hero: Node3D = $Hero
 @onready var hips: Node3D = $Hero/Hips
