@@ -1,0 +1,37 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scenes/test/ghost_test.gd" id="1_test"]
+[ext_resource type="PackedScene" path="res://scenes/player.tscn" id="2_player"]
+[ext_resource type="PackedScene" path="res://scenes/hud.tscn" id="3_hud"]
+[ext_resource type="Material" path="res://materials/grass.tres" id="4_grass"]
+
+[sub_resource type="BoxShape3D" id="Shape_floor"]
+size = Vector3(40, 1, 40)
+
+[sub_resource type="BoxMesh" id="Mesh_floor"]
+size = Vector3(40, 1, 40)
+
+[node name="GhostTest" type="Node3D"]
+script = ExtResource("1_test")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.7, -0.5, 0.5, 0, 0.7, 0.7, -0.7, -0.5, 0.5, 0, 8, 0)
+shadow_enabled = true
+
+[node name="Floor" type="StaticBody3D" parent="."]
+collision_layer = 1
+collision_mask = 0
+
+[node name="FloorShape" type="CollisionShape3D" parent="Floor"]
+position = Vector3(0, -0.5, 0)
+shape = SubResource("Shape_floor")
+
+[node name="FloorMesh" type="MeshInstance3D" parent="Floor"]
+position = Vector3(0, -0.5, 0)
+mesh = SubResource("Mesh_floor")
+material_override = ExtResource("4_grass")
+
+[node name="Player" parent="." instance=ExtResource("2_player")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+
+[node name="HUD" parent="." instance=ExtResource("3_hud")]

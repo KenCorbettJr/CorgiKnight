@@ -1,0 +1,209 @@
+[gd_scene load_steps=17 format=3]
+
+[ext_resource type="Material" path="res://materials/corgi_orange.tres" id="2_orange"]
+
+[ext_resource type="Material" path="res://materials/corgi_white.tres" id="3_white"]
+
+[ext_resource type="Material" path="res://materials/black.tres" id="4_black"]
+
+[sub_resource type="SphereMesh" id="Mesh_torso"]
+radius = 0.28
+height = 0.6
+
+[sub_resource type="SphereMesh" id="Mesh_belly"]
+radius = 0.2
+height = 0.44
+
+[sub_resource type="SphereMesh" id="Mesh_tail"]
+radius = 0.1
+height = 0.2
+
+[sub_resource type="SphereMesh" id="Mesh_head"]
+radius = 0.3
+height = 0.56
+
+[sub_resource type="SphereMesh" id="Mesh_muzzle"]
+radius = 0.17
+height = 0.34
+
+[sub_resource type="SphereMesh" id="Mesh_snout"]
+radius = 0.1
+height = 0.2
+
+[sub_resource type="SphereMesh" id="Mesh_nose"]
+radius = 0.045
+height = 0.09
+
+[sub_resource type="SphereMesh" id="Mesh_eye"]
+radius = 0.045
+height = 0.09
+
+[sub_resource type="CylinderMesh" id="Mesh_ear"]
+top_radius = 0.0
+bottom_radius = 0.11
+height = 0.32
+radial_segments = 16
+
+[sub_resource type="CapsuleMesh" id="Mesh_arm"]
+radius = 0.075
+height = 0.28
+
+[sub_resource type="SphereMesh" id="Mesh_paw"]
+radius = 0.08
+height = 0.16
+
+[sub_resource type="CapsuleMesh" id="Mesh_leg"]
+radius = 0.09
+height = 0.26
+
+[sub_resource type="SphereMesh" id="Mesh_foot"]
+radius = 0.1
+height = 0.12
+
+[node name="CorgiModel" type="Node3D"]
+
+[node name="Hips" type="Node3D" parent="."]
+position = Vector3(0, 0.3, 0)
+
+[node name="Torso" type="MeshInstance3D" parent="Hips"]
+position = Vector3(0, 0.24, 0)
+scale = Vector3(1, 1, 0.85)
+mesh = SubResource("Mesh_torso")
+material_override = ExtResource("2_orange")
+
+[node name="Belly" type="MeshInstance3D" parent="Hips"]
+position = Vector3(0, 0.2, -0.12)
+scale = Vector3(1, 1, 0.6)
+mesh = SubResource("Mesh_belly")
+material_override = ExtResource("3_white")
+
+[node name="ChestSocket" type="Node3D" parent="Hips"]
+position = Vector3(0, 0.3, 0)
+
+[node name="BackSocket" type="Node3D" parent="Hips"]
+position = Vector3(0, 0.32, 0.22)
+
+[node name="Tail" type="Node3D" parent="Hips"]
+position = Vector3(0, 0.1, 0.22)
+
+[node name="TailMesh" type="MeshInstance3D" parent="Hips/Tail"]
+position = Vector3(0, 0.02, 0.07)
+scale = Vector3(1, 0.9, 1.2)
+mesh = SubResource("Mesh_tail")
+material_override = ExtResource("3_white")
+
+[node name="Head" type="Node3D" parent="Hips"]
+position = Vector3(0, 0.72, 0)
+
+[node name="HeadMesh" type="MeshInstance3D" parent="Hips/Head"]
+mesh = SubResource("Mesh_head")
+material_override = ExtResource("2_orange")
+
+[node name="Muzzle" type="MeshInstance3D" parent="Hips/Head"]
+position = Vector3(0, -0.08, -0.2)
+scale = Vector3(1.1, 0.8, 1)
+mesh = SubResource("Mesh_muzzle")
+material_override = ExtResource("3_white")
+
+[node name="Snout" type="MeshInstance3D" parent="Hips/Head"]
+position = Vector3(0, -0.07, -0.34)
+scale = Vector3(1, 0.8, 1.1)
+mesh = SubResource("Mesh_snout")
+material_override = ExtResource("3_white")
+
+[node name="Nose" type="MeshInstance3D" parent="Hips/Head"]
+position = Vector3(0, -0.03, -0.44)
+mesh = SubResource("Mesh_nose")
+material_override = ExtResource("4_black")
+
+[node name="EyeL" type="MeshInstance3D" parent="Hips/Head"]
+position = Vector3(-0.12, 0.05, -0.26)
+mesh = SubResource("Mesh_eye")
+material_override = ExtResource("4_black")
+
+[node name="EyeR" type="MeshInstance3D" parent="Hips/Head"]
+position = Vector3(0.12, 0.05, -0.26)
+mesh = SubResource("Mesh_eye")
+material_override = ExtResource("4_black")
+
+[node name="EarL" type="MeshInstance3D" parent="Hips/Head"]
+position = Vector3(-0.17, 0.3, -0.02)
+rotation = Vector3(0, 0, 0.35)
+mesh = SubResource("Mesh_ear")
+material_override = ExtResource("2_orange")
+
+[node name="EarR" type="MeshInstance3D" parent="Hips/Head"]
+position = Vector3(0.17, 0.3, -0.02)
+rotation = Vector3(0, 0, -0.35)
+mesh = SubResource("Mesh_ear")
+material_override = ExtResource("2_orange")
+
+[node name="HeadSocket" type="Node3D" parent="Hips/Head"]
+position = Vector3(0, 0.12, 0)
+
+[node name="ArmL" type="Node3D" parent="Hips"]
+position = Vector3(-0.3, 0.4, 0)
+
+[node name="ArmMesh" type="MeshInstance3D" parent="Hips/ArmL"]
+position = Vector3(0, -0.1, 0)
+mesh = SubResource("Mesh_arm")
+material_override = ExtResource("2_orange")
+
+[node name="Paw" type="MeshInstance3D" parent="Hips/ArmL"]
+position = Vector3(0, -0.22, 0)
+mesh = SubResource("Mesh_paw")
+material_override = ExtResource("3_white")
+
+[node name="HandLSocket" type="Node3D" parent="Hips/ArmL"]
+position = Vector3(-0.04, -0.22, 0)
+
+[node name="ArmR" type="Node3D" parent="Hips"]
+position = Vector3(0.3, 0.4, 0)
+
+[node name="ArmMesh" type="MeshInstance3D" parent="Hips/ArmR"]
+position = Vector3(0, -0.1, 0)
+mesh = SubResource("Mesh_arm")
+material_override = ExtResource("2_orange")
+
+[node name="Paw" type="MeshInstance3D" parent="Hips/ArmR"]
+position = Vector3(0, -0.22, 0)
+mesh = SubResource("Mesh_paw")
+material_override = ExtResource("3_white")
+
+[node name="HandRSocket" type="Node3D" parent="Hips/ArmR"]
+position = Vector3(0.02, -0.22, 0)
+rotation = Vector3(0.5, 0, 0)
+
+[node name="LegL" type="Node3D" parent="."]
+position = Vector3(-0.12, 0.28, 0)
+
+[node name="LegMesh" type="MeshInstance3D" parent="LegL"]
+position = Vector3(0, -0.11, 0)
+mesh = SubResource("Mesh_leg")
+material_override = ExtResource("2_orange")
+
+[node name="Foot" type="MeshInstance3D" parent="LegL"]
+position = Vector3(0, -0.23, -0.04)
+scale = Vector3(1, 1, 1.3)
+mesh = SubResource("Mesh_foot")
+material_override = ExtResource("3_white")
+
+[node name="FootLSocket" type="Node3D" parent="LegL"]
+position = Vector3(0, -0.23, -0.03)
+
+[node name="LegR" type="Node3D" parent="."]
+position = Vector3(0.12, 0.28, 0)
+
+[node name="LegMesh" type="MeshInstance3D" parent="LegR"]
+position = Vector3(0, -0.11, 0)
+mesh = SubResource("Mesh_leg")
+material_override = ExtResource("2_orange")
+
+[node name="Foot" type="MeshInstance3D" parent="LegR"]
+position = Vector3(0, -0.23, -0.04)
+scale = Vector3(1, 1, 1.3)
+mesh = SubResource("Mesh_foot")
+material_override = ExtResource("3_white")
+
+[node name="FootRSocket" type="Node3D" parent="LegR"]
+position = Vector3(0, -0.23, -0.03)

@@ -1,0 +1,46 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/equipment_item.gd" id="1_item"]
+[ext_resource type="Material" path="res://materials/steel_blue.tres" id="2_steel"]
+[ext_resource type="Material" path="res://materials/gold.tres" id="3_gold"]
+[ext_resource type="Material" path="res://materials/cape_red.tres" id="4_red"]
+
+[sub_resource type="BoxMesh" id="Mesh_board"]
+size = Vector3(0.05, 0.46, 0.36)
+
+[sub_resource type="PrismMesh" id="Mesh_tip"]
+size = Vector3(0.36, 0.18, 0.05)
+
+[sub_resource type="SphereMesh" id="Mesh_boss"]
+radius = 0.06
+height = 0.08
+
+[sub_resource type="BoxMesh" id="Mesh_stripe"]
+size = Vector3(0.02, 0.44, 0.08)
+
+[node name="KnightShield" type="Node3D"]
+script = ExtResource("1_item")
+slot = "shield"
+defense = 2
+display_name = "Knight Shield"
+
+[node name="Board" type="MeshInstance3D" parent="."]
+position = Vector3(-0.06, 0.08, 0)
+mesh = SubResource("Mesh_board")
+material_override = ExtResource("2_steel")
+
+[node name="Tip" type="MeshInstance3D" parent="."]
+position = Vector3(-0.06, -0.24, 0)
+rotation = Vector3(3.14159, 1.5708, 0)
+mesh = SubResource("Mesh_tip")
+material_override = ExtResource("2_steel")
+
+[node name="Stripe" type="MeshInstance3D" parent="."]
+position = Vector3(-0.09, 0.08, 0)
+mesh = SubResource("Mesh_stripe")
+material_override = ExtResource("4_red")
+
+[node name="Boss" type="MeshInstance3D" parent="."]
+position = Vector3(-0.1, 0.12, 0)
+mesh = SubResource("Mesh_boss")
+material_override = ExtResource("3_gold")

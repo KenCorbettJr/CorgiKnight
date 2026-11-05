@@ -1,0 +1,16 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+; Little glowing sparkles that spiral into the nozzle while you vacuum.
+; Billboarded dots that glow, so they look like bits of ghostly mist being
+; pulled in. Used by the Swirl particles on the Ghost Sucker.
+
+[resource]
+transparency = 1
+shading_mode = 0
+vertex_color_use_as_albedo = true
+albedo_color = Color(0.8, 0.98, 1.0, 1)
+emission_enabled = true
+emission = Color(0.7, 0.95, 1.0, 1)
+emission_energy_multiplier = 2.0
+billboard_mode = 3
+billboard_keep_scale = true

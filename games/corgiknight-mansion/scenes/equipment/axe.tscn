@@ -1,0 +1,29 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scripts/equipment_item.gd" id="1_item"]
+[ext_resource type="Material" path="res://materials/wood_dark.tres" id="2_handle"]
+[ext_resource type="Material" path="res://materials/steel.tres" id="3_steel"]
+
+[sub_resource type="BoxMesh" id="Mesh_handle"]
+size = Vector3(0.06, 0.06, 0.62)
+
+[sub_resource type="BoxMesh" id="Mesh_head"]
+size = Vector3(0.06, 0.22, 0.2)
+
+[node name="Axe" type="Node3D"]
+script = ExtResource("1_item")
+slot = "weapon"
+damage = 1
+reach = 1.7
+display_name = "Axe"
+can_chop = true
+
+[node name="Handle" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0, -0.25)
+mesh = SubResource("Mesh_handle")
+material_override = ExtResource("2_handle")
+
+[node name="Head" type="MeshInstance3D" parent="."]
+position = Vector3(0, -0.07, -0.47)
+mesh = SubResource("Mesh_head")
+material_override = ExtResource("3_steel")

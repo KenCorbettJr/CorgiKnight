@@ -1,0 +1,21 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/coin_pickup.gd" id="1_script"]
+[ext_resource type="Material" path="res://materials/gold.tres" id="2_gold"]
+
+[sub_resource type="CylinderMesh" id="Mesh_coin"]
+top_radius = 0.16
+bottom_radius = 0.16
+height = 0.04
+radial_segments = 20
+
+[node name="CoinPickup" type="Node3D"]
+script = ExtResource("1_script")
+kind = "coin"
+
+[node name="Visual" type="Node3D" parent="."]
+
+[node name="Coin" type="MeshInstance3D" parent="Visual"]
+rotation = Vector3(1.5708, 0, 0)
+mesh = SubResource("Mesh_coin")
+material_override = ExtResource("2_gold")

@@ -1,0 +1,51 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scripts/ghost_portal.gd" id="1_script"]
+[ext_resource type="Material" path="res://materials/stone.tres" id="2_stone"]
+[ext_resource type="Material" path="res://materials/crystal_purple.tres" id="3_purple"]
+
+[sub_resource type="TorusMesh" id="Mesh_ring"]
+inner_radius = 1.1
+outer_radius = 1.5
+
+[sub_resource type="CylinderMesh" id="Mesh_swirl"]
+top_radius = 1.1
+bottom_radius = 1.1
+height = 0.15
+radial_segments = 24
+
+[sub_resource type="StandardMaterial3D" id="Mat_swirl"]
+albedo_color = Color(0.55, 0.9, 0.6, 0.75)
+emission_enabled = true
+emission = Color(0.45, 1, 0.6, 1)
+emission_energy_multiplier = 2.0
+transparency = 1
+
+[node name="GhostPortal" type="Node3D"]
+script = ExtResource("1_script")
+
+[node name="Ring" type="MeshInstance3D" parent="."]
+position = Vector3(0, 2.4, 0)
+rotation = Vector3(1.5708, 0, 0)
+mesh = SubResource("Mesh_ring")
+material_override = ExtResource("2_stone")
+
+[node name="Swirl" type="Node3D" parent="."]
+position = Vector3(0, 2.4, 0)
+
+[node name="Disc" type="MeshInstance3D" parent="Swirl"]
+rotation = Vector3(1.5708, 0, 0)
+mesh = SubResource("Mesh_swirl")
+material_override = SubResource("Mat_swirl")
+
+[node name="Disc2" type="MeshInstance3D" parent="Swirl"]
+rotation = Vector3(1.5708, 0.7, 0)
+scale = Vector3(0.6, 1, 0.6)
+mesh = SubResource("Mesh_swirl")
+material_override = ExtResource("3_purple")
+
+[node name="Light" type="OmniLight3D" parent="."]
+position = Vector3(0, 2.4, 0)
+light_color = Color(0.5, 1, 0.6, 1)
+light_energy = 2.4
+omni_range = 10.0

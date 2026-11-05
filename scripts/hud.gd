@@ -4,6 +4,12 @@ extends CanvasLayer
 ## pop-up banners, and screen fades.
 
 @onready var hearts: Control = $Hearts
+@onready var scare_meter: Control = $ScareMeter
+@onready var scare_label: Label = $ScareLabel
+@onready var ghost_energy_label: Label = $GhostEnergyLabel
+@onready var choice_overlay: Control = $ChoiceOverlay
+@onready var choice_prompt: Label = $ChoiceOverlay/ChoicePanel/Margin/VBox/Prompt
+@onready var choice_options: VBoxContainer = $ChoiceOverlay/ChoicePanel/Margin/VBox/Options
 @onready var quest_label: Label = $QuestLabel
 @onready var collect_label: Label = $CollectLabel
 @onready var prompt_label: Label = $Prompt
@@ -40,6 +46,11 @@ var _on_done: Callable
 var _typing: Tween
 var _banner_tween: Tween
 var _shop: Node
+## What to call when the player picks a choice from the choice overlay.
+var _on_choice: Callable
+## The scare meter: how many pips are filled, out of how many.
+var _scare := 0
+var _scare_max := 5
 ## Name, slot and description of each gear scene (so we only look them up once).
 var _gear_info := {}
 
@@ -63,6 +74,7 @@ func _ready() -> void:
 	# Keep the HUD working while the game is paused (the inventory pauses it).
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	hearts.draw.connect(_draw_hearts)
+	scare_meter.draw.connect(_draw_scare_meter)
 	banner.visible = false
 	dialogue_box.visible = false
 	prompt_label.visible = false
@@ -75,12 +87,18 @@ func _ready() -> void:
 	Game.item_received.connect(func(item_name: String) -> void: show_banner("You got the %s!" % item_name))
 	Game.message.connect(show_banner)
 	Game.dialogue_requested.connect(_on_dialogue_requested)
+	Game.choice_requested.connect(_on_choice_requested)
 	Game.coins_changed.connect(_on_coins_changed)
 	Game.shop_requested.connect(_on_shop_requested)
+	# Haunted-island HUD: the scare meter and ghost-energy counter.
+	Game.scare_changed.connect(_on_scare_changed)
+	Game.ghost_energy_changed.connect(_on_ghost_energy_changed)
 	shop_overlay.visible = false
 	inventory_overlay.visible = false
+	choice_overlay.visible = false
 	_on_coins_changed(Game.coins)
 	_on_stage_changed(Game.stage)
+	_update_haunted_hud()
 
 
 # ---------------------------------------------------------------- Hearts
@@ -110,12 +128,70 @@ func _draw_heart(center: Vector2, size: float, color: Color) -> void:
 	]), color)
 
 
+# ---------------------------------------------------------------- Scare meter
+
+## The scare meter: a row of little ghost blobs on the haunted island. Each
+## scare fills one. Fill them all and the corgi runs off!
+func _draw_scare_meter() -> void:
+	for i in _scare_max:
+		var center := Vector2(22 + i * 40, 22)
+		var filled := i < _scare
+		_draw_ghost(center, 1.18, Color(0.08, 0.05, 0.12))  # dark outline
+		var body := Color(0.95, 0.5, 0.95) if filled else Color(0.3, 0.3, 0.38)
+		_draw_ghost(center, 1.0, body)
+
+
+## A cute little ghost: a domed head and a wavy skirt, with two eyes.
+func _draw_ghost(center: Vector2, size: float, color: Color) -> void:
+	var r := 9.0 * size
+	# Rounded head.
+	scare_meter.draw_circle(center + Vector2(0, -3) * size, r, color)
+	# Boxy body down to the wavy bottom.
+	scare_meter.draw_colored_polygon(PackedVector2Array([
+		center + Vector2(-9, -3) * size,
+		center + Vector2(9, -3) * size,
+		center + Vector2(9, 8) * size,
+		center + Vector2(-9, 8) * size,
+	]), color)
+	# Three little scalloped feet along the bottom.
+	for foot in [-6.0, 0.0, 6.0]:
+		scare_meter.draw_circle(center + Vector2(foot, 8) * size, 3.0 * size, color)
+	# Eyes (only on a "real" ghost, not the dark outline layer).
+	if size < 1.1:
+		var eye := Color(0.1, 0.06, 0.14)
+		scare_meter.draw_circle(center + Vector2(-3.5, -4) * size, 1.8 * size, eye)
+		scare_meter.draw_circle(center + Vector2(3.5, -4) * size, 1.8 * size, eye)
+
+
+## Show or hide the haunted-only HUD bits depending on where the corgi is.
+func _update_haunted_hud() -> void:
+	var on_haunted := Game.area == "haunted"
+	scare_meter.visible = on_haunted
+	scare_label.visible = on_haunted
+	ghost_energy_label.visible = on_haunted
+	if on_haunted:
+		_on_scare_changed(Game.scare, Game.scare_max)
+		_on_ghost_energy_changed(Game.ghost_energy, Game.ghosts_caught)
+
+
+func _on_scare_changed(filled: int, maximum: int) -> void:
+	_scare = filled
+	_scare_max = maximum
+	scare_label.text = "Scared: %d / %d" % [filled, maximum]
+	scare_meter.queue_redraw()
+
+
+func _on_ghost_energy_changed(energy: int, _caught: int) -> void:
+	ghost_energy_label.text = "Ghost Energy: %d" % energy
+
+
 # ---------------------------------------------------------------- Quest
 
 func _on_stage_changed(_stage: int) -> void:
 	var text: String = Game.quest_text()
 	quest_label.text = ("Quest: " + text) if text != "" else ""
 	_update_collect_label()
+	_update_haunted_hud()
 
 
 func _on_item_count_changed(_kind: String, _count: int) -> void:
@@ -199,6 +275,14 @@ func _show_line() -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if choice_overlay.visible:
+		# Esc picks the last option (usually "Never mind").
+		if event.is_action_pressed("ui_cancel"):
+			get_viewport().set_input_as_handled()
+			var buttons := choice_options.get_children()
+			if not buttons.is_empty():
+				(buttons[buttons.size() - 1] as Button).pressed.emit()
+		return
 	if inventory_overlay.visible:
 		if event.is_action_pressed("inventory") or event.is_action_pressed("ui_cancel"):
 			get_viewport().set_input_as_handled()
@@ -247,6 +331,45 @@ func _close_dialogue() -> void:
 	Game.controls_locked = false
 	if on_done.is_valid():
 		on_done.call()
+
+
+# ---------------------------------------------------------------- Choice menu
+
+## Pop up a little menu of buttons (Salty's "where to?" uses this).
+func _on_choice_requested(prompt: String, options: Array, on_choice: Callable) -> void:
+	_on_choice = on_choice
+	Game.controls_locked = true
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	choice_prompt.text = prompt
+	choice_overlay.visible = true
+	controls_hint.visible = false
+	prompt_label.visible = false
+	for child in choice_options.get_children():
+		choice_options.remove_child(child)
+		child.queue_free()
+	for option in options:
+		var value: Variant = option.get("value", "")
+		var button := _make_button(str(option.get("text", "...")), _on_choice_pressed.bind(value), false)
+		button.alignment = HORIZONTAL_ALIGNMENT_CENTER
+		choice_options.add_child(button)
+	# Put the cursor on the first button.
+	for child in choice_options.get_children():
+		(child as Button).grab_focus.call_deferred()
+		break
+
+
+func _on_choice_pressed(value: Variant) -> void:
+	if not choice_overlay.visible:
+		return
+	choice_overlay.visible = false
+	controls_hint.visible = true
+	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	var on_choice := _on_choice
+	_on_choice = Callable()
+	await get_tree().create_timer(0.2).timeout
+	Game.controls_locked = false
+	if on_choice.is_valid():
+		on_choice.call(value)
 
 
 # ---------------------------------------------------------------- Shop

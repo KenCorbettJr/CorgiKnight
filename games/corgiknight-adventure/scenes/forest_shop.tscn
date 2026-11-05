@@ -1,0 +1,145 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/stone_block.tscn" id="1_block"]
+[ext_resource type="PackedScene" path="res://scenes/characters/villager.tscn" id="2_villager"]
+[ext_resource type="Script" path="res://scripts/shopkeeper.gd" id="3_shop"]
+[ext_resource type="Material" path="res://materials/wood.tres" id="m_wood"]
+[ext_resource type="Material" path="res://materials/wood_dark.tres" id="m_wood_dark"]
+[ext_resource type="Material" path="res://materials/roof_green.tres" id="m_roof"]
+[ext_resource type="Material" path="res://materials/awning_cream.tres" id="m_cream"]
+[ext_resource type="Material" path="res://materials/corgi_white.tres" id="m_slime"]
+[ext_resource type="Material" path="res://materials/bark.tres" id="m_bark"]
+[ext_resource type="Material" path="res://materials/iron.tres" id="m_iron"]
+[ext_resource type="PackedScene" path="res://scenes/equipment/chainmail.tscn" id="e_cap"]
+[ext_resource type="PackedScene" path="res://scenes/equipment/knight_shield.tscn" id="e_shield"]
+[ext_resource type="PackedScene" path="res://scenes/equipment/forest_boots.tscn" id="e_boots"]
+[ext_resource type="PackedScene" path="res://scenes/equipment/steel_helmet.tscn" id="e_helmet"]
+[ext_resource type="PackedScene" path="res://scenes/equipment/steel_sword.tscn" id="e_sword"]
+
+[sub_resource type="BoxMesh" id="Mesh_stripe"]
+size = Vector3(0.45, 0.02, 2.42)
+
+[sub_resource type="CylinderMesh" id="Mesh_jar"]
+top_radius = 0.1
+bottom_radius = 0.12
+height = 0.22
+radial_segments = 16
+
+[sub_resource type="CylinderMesh" id="Mesh_log"]
+top_radius = 0.08
+bottom_radius = 0.08
+height = 0.5
+radial_segments = 10
+
+[sub_resource type="SphereMesh" id="Mesh_helmet"]
+radius = 0.2
+height = 0.2
+is_hemisphere = true
+
+[node name="ForestShop" type="Node3D" groups=["keep_clear", "building"]]
+
+[node name="Counter" parent="." instance=ExtResource("1_block")]
+position = Vector3(0, 0, 0)
+size = Vector3(3.0, 0.9, 0.8)
+material = ExtResource("m_wood")
+
+[node name="Post1" parent="." instance=ExtResource("1_block")]
+position = Vector3(-1.45, 0, 0.3)
+size = Vector3(0.14, 2.25, 0.14)
+material = ExtResource("m_wood_dark")
+
+[node name="Post2" parent="." instance=ExtResource("1_block")]
+position = Vector3(1.45, 0, 0.3)
+size = Vector3(0.14, 2.25, 0.14)
+material = ExtResource("m_wood_dark")
+
+[node name="Post3" parent="." instance=ExtResource("1_block")]
+position = Vector3(-1.45, 0, -1.7)
+size = Vector3(0.14, 2.6, 0.14)
+material = ExtResource("m_wood_dark")
+
+[node name="Post4" parent="." instance=ExtResource("1_block")]
+position = Vector3(1.45, 0, -1.7)
+size = Vector3(0.14, 2.6, 0.14)
+material = ExtResource("m_wood_dark")
+
+[node name="Awning" type="Node3D" parent="."]
+position = Vector3(0, 2.4, -0.7)
+rotation = Vector3(0.2, 0, 0)
+
+[node name="Cloth" parent="Awning" instance=ExtResource("1_block")]
+position = Vector3(0, 0, 0)
+size = Vector3(3.4, 0.1, 2.4)
+material = ExtResource("m_roof")
+
+[node name="Stripe1" type="MeshInstance3D" parent="Awning"]
+position = Vector3(-0.9000000000000001, 0.11, 0)
+mesh = SubResource("Mesh_stripe")
+material_override = ExtResource("m_cream")
+
+[node name="Stripe2" type="MeshInstance3D" parent="Awning"]
+position = Vector3(0.0, 0.11, 0)
+mesh = SubResource("Mesh_stripe")
+material_override = ExtResource("m_cream")
+
+[node name="Stripe3" type="MeshInstance3D" parent="Awning"]
+position = Vector3(0.8999999999999999, 0.11, 0)
+mesh = SubResource("Mesh_stripe")
+material_override = ExtResource("m_cream")
+
+[node name="JellyJar" type="MeshInstance3D" parent="."]
+position = Vector3(-1.0, 1.01, 0.05)
+mesh = SubResource("Mesh_jar")
+material_override = ExtResource("m_slime")
+
+[node name="JellyJar2" type="MeshInstance3D" parent="."]
+position = Vector3(-0.72, 1.01, 0.12)
+mesh = SubResource("Mesh_jar")
+material_override = ExtResource("m_slime")
+
+[node name="Log1" type="MeshInstance3D" parent="."]
+position = Vector3(0.9, 0.98, 0.1)
+rotation = Vector3(0, 0, 1.5708)
+mesh = SubResource("Mesh_log")
+material_override = ExtResource("m_bark")
+
+[node name="Log2" type="MeshInstance3D" parent="."]
+position = Vector3(0.9, 0.98, -0.08)
+rotation = Vector3(0, 0, 1.5708)
+mesh = SubResource("Mesh_log")
+material_override = ExtResource("m_bark")
+
+[node name="Log3" type="MeshInstance3D" parent="."]
+position = Vector3(0.9, 1.12, 0.01)
+rotation = Vector3(0, 0, 1.5708)
+mesh = SubResource("Mesh_log")
+material_override = ExtResource("m_bark")
+
+[node name="HelmetDisplay" type="MeshInstance3D" parent="."]
+position = Vector3(0.1, 0.9, 0.05)
+mesh = SubResource("Mesh_helmet")
+material_override = ExtResource("m_iron")
+
+[node name="Sign" type="Label3D" parent="."]
+position = Vector3(0, 3.2, 0.4)
+billboard = 1
+modulate = Color(1, 0.92, 0.55, 1)
+outline_modulate = Color(0.25, 0.13, 0.08, 1)
+text = "Juniper's Trading Post"
+font_size = 110
+outline_size = 18
+
+[node name="Juniper" parent="." instance=ExtResource("2_villager")]
+position = Vector3(0, 0, -1.0)
+rotation = Vector3(0, 3.14159, 0)
+script = ExtResource("3_shop")
+npc_name = "Juniper"
+prompt_text = "Shop with Juniper"
+fur_color = Color(0.85, 0.5, 0.3, 1)
+accessory = 1
+size = 1.05
+lines = Array[String]([])
+stock = Array[PackedScene]([ExtResource("e_cap"), ExtResource("e_shield"), ExtResource("e_boots"), ExtResource("e_helmet"), ExtResource("e_sword")])
+prices = Array[int]([40, 50, 45, 65, 80])
+shop_name = "Juniper's Trading Post"
+greeting = "Welcome to Juniper's Trading Post, traveler!|I buy Slime Jelly, Wood and Cyclops Teeth, and I sell the toughest gear this side of the sea."

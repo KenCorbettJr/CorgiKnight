@@ -1,0 +1,107 @@
+[gd_scene load_steps=13 format=3]
+
+[ext_resource type="Script" path="res://scripts/equipment_item.gd" id="1_item"]
+[ext_resource type="Material" path="res://materials/steel_blue.tres" id="2_tank"]
+[ext_resource type="Material" path="res://materials/wood_dark.tres" id="3_hose"]
+[ext_resource type="Material" path="res://materials/gold.tres" id="4_trim"]
+[ext_resource type="Material" path="res://materials/vacuum_beam.tres" id="5_beam"]
+[ext_resource type="Material" path="res://materials/vacuum_swirl.tres" id="6_swirl"]
+
+[sub_resource type="CylinderMesh" id="Mesh_tank"]
+top_radius = 0.16
+bottom_radius = 0.16
+height = 0.42
+
+[sub_resource type="CylinderMesh" id="Mesh_hose"]
+top_radius = 0.045
+bottom_radius = 0.045
+height = 0.5
+
+[sub_resource type="CylinderMesh" id="Mesh_nozzle"]
+top_radius = 0.12
+bottom_radius = 0.05
+height = 0.22
+
+; The "suck" cone: a wide-mouthed cone pointing out the front of the nozzle.
+[sub_resource type="CylinderMesh" id="Mesh_beam"]
+top_radius = 1.4
+bottom_radius = 0.08
+height = 5.0
+
+[sub_resource type="SphereMesh" id="Mesh_spark"]
+radius = 0.05
+height = 0.1
+
+; Sparkles spawn out in the cone and get sucked back toward the nozzle.
+[sub_resource type="ParticleProcessMaterial" id="Proc_swirl"]
+emission_shape = 1
+emission_sphere_radius = 1.2
+direction = Vector3(0, 0, 1)
+spread = 0.0
+initial_velocity_min = 2.5
+initial_velocity_max = 4.0
+gravity = Vector3(0, 0, 0)
+radial_accel_min = -6.0
+radial_accel_max = -9.0
+tangential_accel_min = 3.0
+tangential_accel_max = 6.0
+scale_min = 0.4
+scale_max = 1.0
+color = Color(0.75, 0.97, 1.0, 1)
+
+[node name="GhostVacuum" type="Node3D"]
+script = ExtResource("1_item")
+slot = "weapon"
+damage = 0
+reach = 0.0
+display_name = "Ghost Sucker"
+is_vacuum = true
+beam_range = 5.0
+beam_angle = 32.0
+
+; The tank rides up over the shoulder / behind the corgi. It's attached to the
+; right hand socket like the sword, so we push it back (+Z) and up (+Y) to sit
+; against the corgi's back. Simple shapes, same toon look as everything else.
+[node name="Tank" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.28, 0.42)
+mesh = SubResource("Mesh_tank")
+material_override = ExtResource("2_tank")
+
+[node name="TankCapTop" type="MeshInstance3D" parent="Tank"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.21, 0)
+mesh = SubResource("Mesh_nozzle")
+material_override = ExtResource("4_trim")
+
+; The hose curves from the tank forward to the nozzle the corgi "holds".
+[node name="Hose" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.3, 0.95, 0, -0.95, 0.3, 0, 0.14, 0.05)
+mesh = SubResource("Mesh_hose")
+material_override = ExtResource("3_hose")
+
+; The nozzle points forward (-Z), where the beam comes out. equipment_item.gd
+; looks for this node by name ("Nozzle") to place the beam + find the suck point.
+[node name="Nozzle" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.18)
+
+[node name="NozzleBody" type="MeshInstance3D" parent="Nozzle"]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, -0.08)
+mesh = SubResource("Mesh_nozzle")
+material_override = ExtResource("4_trim")
+
+; The visible beam cone (hidden until you hold the attack button). It points
+; down -Z, matching the corgi's facing. Tip near the nozzle, wide mouth far out.
+[node name="Beam" type="MeshInstance3D" parent="Nozzle"]
+transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0, -2.5)
+visible = false
+mesh = SubResource("Mesh_beam")
+material_override = ExtResource("5_beam")
+
+; Swirly sparkles pulled into the nozzle (off until you vacuum).
+[node name="Swirl" type="GPUParticles3D" parent="Nozzle"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.8)
+emitting = false
+amount = 40
+lifetime = 0.6
+process_material = SubResource("Proc_swirl")
+draw_pass_1 = SubResource("Mesh_spark")
+material_override = ExtResource("6_swirl")

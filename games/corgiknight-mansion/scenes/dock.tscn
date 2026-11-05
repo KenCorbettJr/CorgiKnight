@@ -1,0 +1,122 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/stone_block.tscn" id="1_block"]
+[ext_resource type="Script" path="res://scripts/boat.gd" id="2_boat"]
+[ext_resource type="PackedScene" path="res://scenes/characters/villager.tscn" id="3_villager"]
+[ext_resource type="Script" path="res://scripts/captain.gd" id="4_captain"]
+[ext_resource type="Material" path="res://materials/wood.tres" id="m_wood"]
+[ext_resource type="Material" path="res://materials/wood_dark.tres" id="m_dark"]
+[ext_resource type="Material" path="res://materials/bark.tres" id="m_hull"]
+[ext_resource type="Material" path="res://materials/awning_cream.tres" id="m_sail"]
+[ext_resource type="Material" path="res://materials/cape_red.tres" id="m_red"]
+
+[sub_resource type="BoxMesh" id="Mesh_hull"]
+size = Vector3(1.8, 0.8, 4.2)
+
+[sub_resource type="PrismMesh" id="Mesh_bow"]
+size = Vector3(1.8, 0.9, 0.8)
+
+[sub_resource type="BoxMesh" id="Mesh_deck"]
+size = Vector3(1.6, 0.04, 4.0)
+
+[sub_resource type="CylinderMesh" id="Mesh_mast"]
+top_radius = 0.06
+bottom_radius = 0.09
+height = 3.0
+radial_segments = 10
+
+[sub_resource type="BoxMesh" id="Mesh_sail"]
+size = Vector3(0.05, 2.0, 1.5)
+
+[sub_resource type="BoxMesh" id="Mesh_flag"]
+size = Vector3(0.03, 0.25, 0.4)
+
+[node name="Dock" type="Node3D" groups=["keep_clear"]]
+
+[node name="Planks" parent="." instance=ExtResource("1_block")]
+position = Vector3(0, -0.15, -3.5)
+size = Vector3(2.4, 0.2, 9.0)
+material = ExtResource("m_wood")
+
+[node name="Post1" parent="." instance=ExtResource("1_block")]
+position = Vector3(-1.1, -1.35, -1.0)
+size = Vector3(0.22, 1.4, 0.22)
+material = ExtResource("m_dark")
+
+[node name="Post2" parent="." instance=ExtResource("1_block")]
+position = Vector3(1.1, -1.35, -1.0)
+size = Vector3(0.22, 1.4, 0.22)
+material = ExtResource("m_dark")
+
+[node name="Post3" parent="." instance=ExtResource("1_block")]
+position = Vector3(-1.1, -1.35, -4.5)
+size = Vector3(0.22, 1.4, 0.22)
+material = ExtResource("m_dark")
+
+[node name="Post4" parent="." instance=ExtResource("1_block")]
+position = Vector3(1.1, -1.35, -4.5)
+size = Vector3(0.22, 1.4, 0.22)
+material = ExtResource("m_dark")
+
+[node name="Post5" parent="." instance=ExtResource("1_block")]
+position = Vector3(-1.1, -1.35, -7.8)
+size = Vector3(0.22, 1.4, 0.22)
+material = ExtResource("m_dark")
+
+[node name="Post6" parent="." instance=ExtResource("1_block")]
+position = Vector3(1.1, -1.35, -7.8)
+size = Vector3(0.22, 1.4, 0.22)
+material = ExtResource("m_dark")
+
+[node name="Boat" type="Node3D" parent="."]
+position = Vector3(2.9, -0.55, -5.5)
+script = ExtResource("2_boat")
+
+[node name="Hull" type="MeshInstance3D" parent="Boat"]
+position = Vector3(0, 0.2, 0)
+mesh = SubResource("Mesh_hull")
+material_override = ExtResource("m_hull")
+
+[node name="Bow" type="MeshInstance3D" parent="Boat"]
+position = Vector3(0, 0.2, -2.55)
+rotation = Vector3(-1.5708, 0, 0)
+mesh = SubResource("Mesh_bow")
+material_override = ExtResource("m_hull")
+
+[node name="Deck" type="MeshInstance3D" parent="Boat"]
+position = Vector3(0, 0.61, 0)
+mesh = SubResource("Mesh_deck")
+material_override = ExtResource("m_wood")
+
+[node name="Mast" type="MeshInstance3D" parent="Boat"]
+position = Vector3(0, 2.1, -0.3)
+mesh = SubResource("Mesh_mast")
+material_override = ExtResource("m_dark")
+
+[node name="Sail" type="MeshInstance3D" parent="Boat"]
+position = Vector3(0, 2.3, 0.45)
+mesh = SubResource("Mesh_sail")
+material_override = ExtResource("m_sail")
+
+[node name="Flag" type="MeshInstance3D" parent="Boat"]
+position = Vector3(0, 3.65, -0.1)
+mesh = SubResource("Mesh_flag")
+material_override = ExtResource("m_red")
+
+[node name="CaptainSalty" parent="." instance=ExtResource("3_villager")]
+position = Vector3(0, 0.05, -7.2)
+script = ExtResource("4_captain")
+npc_name = "Captain Salty"
+fur_color = Color(0.78, 0.55, 0.3, 1)
+accessory = 6
+size = 1.05
+lines = Array[String]([])
+
+[node name="Sign" type="Label3D" parent="."]
+position = Vector3(-1.5, 1.6, 0.5)
+billboard = 1
+modulate = Color(1, 0.95, 0.8, 1)
+outline_modulate = Color(0.25, 0.13, 0.08, 1)
+text = "Salty's Ferry"
+font_size = 72
+outline_size = 14

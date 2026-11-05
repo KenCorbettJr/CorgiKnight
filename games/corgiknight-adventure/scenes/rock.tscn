@@ -1,0 +1,26 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Material" path="res://materials/rock.tres" id="1_rock"]
+
+[sub_resource type="CylinderShape3D" id="Shape_rock"]
+radius = 0.75
+height = 1.0
+
+[sub_resource type="SphereMesh" id="Mesh_rock"]
+radius = 0.85
+height = 1.2
+radial_segments = 10
+rings = 6
+
+[node name="Rock" type="StaticBody3D"]
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+position = Vector3(0, 0.3, 0)
+shape = SubResource("Shape_rock")
+
+[node name="Mesh" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.2, 0)
+mesh = SubResource("Mesh_rock")
+material_override = ExtResource("1_rock")

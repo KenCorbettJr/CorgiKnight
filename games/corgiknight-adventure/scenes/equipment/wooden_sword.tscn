@@ -1,0 +1,36 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scripts/equipment_item.gd" id="1_item"]
+[ext_resource type="Material" path="res://materials/wood_light.tres" id="2_wood"]
+[ext_resource type="Material" path="res://materials/wood_dark.tres" id="3_dark"]
+
+[sub_resource type="BoxMesh" id="Mesh_grip"]
+size = Vector3(0.06, 0.06, 0.18)
+
+[sub_resource type="BoxMesh" id="Mesh_guard"]
+size = Vector3(0.26, 0.07, 0.07)
+
+[sub_resource type="BoxMesh" id="Mesh_blade"]
+size = Vector3(0.06, 0.13, 0.62)
+
+[node name="WoodenSword" type="Node3D"]
+script = ExtResource("1_item")
+slot = "weapon"
+damage = 1
+reach = 1.8
+display_name = "Wooden Sword"
+
+[node name="Grip" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0, 0.02)
+mesh = SubResource("Mesh_grip")
+material_override = ExtResource("3_dark")
+
+[node name="Guard" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0, -0.08)
+mesh = SubResource("Mesh_guard")
+material_override = ExtResource("3_dark")
+
+[node name="Blade" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0, -0.41)
+mesh = SubResource("Mesh_blade")
+material_override = ExtResource("2_wood")
