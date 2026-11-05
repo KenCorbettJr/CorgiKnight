@@ -1,0 +1,44 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://scripts/mansion_root.gd" id="1_root"]
+[ext_resource type="PackedScene" path="res://scenes/player.tscn" id="2_player"]
+[ext_resource type="PackedScene" path="res://scenes/hud.tscn" id="3_hud"]
+[ext_resource type="Script" path="res://scripts/mansion_roguelike.gd" id="4_mansion"]
+
+[sub_resource type="ProceduralSkyMaterial" id="SkyMat"]
+sky_top_color = Color(0.06, 0.05, 0.12, 1)
+sky_horizon_color = Color(0.2, 0.28, 0.25, 1)
+ground_bottom_color = Color(0.05, 0.08, 0.07, 1)
+ground_horizon_color = Color(0.2, 0.28, 0.25, 1)
+
+[sub_resource type="Sky" id="Sky"]
+sky_material = SubResource("SkyMat")
+
+[sub_resource type="Environment" id="Env"]
+background_mode = 2
+sky = SubResource("Sky")
+ambient_light_source = 3
+ambient_light_energy = 0.45
+tonemap_mode = 2
+fog_enabled = true
+fog_light_color = Color(0.3, 0.42, 0.35, 1)
+fog_density = 0.03
+
+[node name="Mansion" type="Node3D"]
+script = ExtResource("1_root")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Env")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+rotation = Vector3(-0.95, 0.6, 0)
+light_energy = 0.6
+shadow_enabled = true
+directional_shadow_max_distance = 40.0
+
+[node name="Mansion" type="Node3D" parent="."]
+script = ExtResource("4_mansion")
+
+[node name="Player" parent="." instance=ExtResource("2_player")]
+
+[node name="HUD" parent="." instance=ExtResource("3_hud")]
